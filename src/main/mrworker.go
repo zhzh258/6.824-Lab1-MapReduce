@@ -10,11 +10,17 @@ package main
 // Please do not change this file.
 //
 
-import "6.824/mr"
-import "plugin"
-import "os"
-import "fmt"
-import "log"
+// In one or more other windows, run some workers:
+// $ go run -race mrworker.go wc.so
+
+import (
+	"fmt"
+	"log"
+	"os"
+	"plugin"
+
+	"6.824/mr"
+)
 
 func main() {
 	if len(os.Args) != 2 {
