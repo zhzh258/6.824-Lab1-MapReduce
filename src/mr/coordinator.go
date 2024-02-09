@@ -6,17 +6,31 @@ import (
 	"net/http"
 	"net/rpc"
 	"os"
+	"sync"
+	"time"
 )
 
 type Coordinator struct {
 	// mu            sync.Mutex // the lock
-	m             int // total number of Map()
-	n             int // total number of Reduce()
-	mapCounter    int // number of Map() done
-	reduceCounter int // number of Reduce() done
+	M           int // total number of Map() tasks
+	N           int // total number of Reduce() tasks
+	MapState    MapReduceState
+	ReduceState MapReduceState
 }
 
-// Your code here -- RPC handlers for the worker to call.
+type MapReduceState struct {
+	Tasks   map[int]*TaskState
+	Mu      sync.Mutex
+	Cond    *sync.Cond
+	AllDone bool
+}
+
+type TaskState struct {
+	Status    string // "pending", "in-progreee", "complete", "failed"
+	Id        int
+	StartTime time.Time
+	Duration  time.Duration
+}
 
 //
 // an example RPC handler.
@@ -27,6 +41,8 @@ func (c *Coordinator) Example(args *ExampleArgs, reply *ExampleReply) error {
 	reply.Y = args.X + 1
 	return nil
 }
+
+// Your code here -- RPC handlers for the worker to call.
 
 //
 // start a thread that listens for RPCs from worker.go
@@ -62,14 +78,44 @@ func (c *Coordinator) Done() bool {
 // nReduce is the number of reduce tasks to use.
 //
 func MakeCoordinator(files []string, nReduce int) *Coordinator {
-	c := Coordinator{}
+	c := &Coordinator{
+		M: len(files),
+		N: nReduce,
+		MapState: MapReduceState{
+			Tasks:   make(map[int]*TaskState),
+			Mu:      sync.Mutex{},
+			AllDone: false,
+		},
+		ReduceState: MapReduceState{
+			Tasks:   make(map[int]*TaskState),
+			Mu:      sync.Mutex{},
+			AllDone: false,
+		},
+	}
 
-	// Your code here.
-	c.m = len(files)
-	c.n = nReduce
+	c.MapState.Cond = sync.NewCond(&c.MapState.Mu)
+	c.ReduceState.Cond = sync.NewCond(&c.ReduceState.Mu)
+
+	// Initialize map tasks
+	for i := 0; i < c.M; i++ {
+		c.MapState.Tasks[i] = &TaskState{
+			Status: "Pending",
+			Id:     i,
+			// StartTime and Duration can be set when the task is actually started
+		}
+	}
+
+	// Initialize reduce tasks
+	for i := 0; i < c.N; i++ {
+		c.ReduceState.Tasks[i] = &TaskState{
+			Status: "Pending",
+			Id:     i,
+			// StartTime and Duration can be set when the task is actually started
+		}
+	}
 
 	c.server()
-	return &c
+	return c
 }
 
 // Assumptions (for now):
