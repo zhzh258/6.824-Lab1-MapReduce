@@ -90,7 +90,7 @@ func Worker(mapf func(string, string) []KeyValue,
 		if getok {
 			fmt.Printf("worker successfully fetched new Reduce task (or blocked till allDone), Y = %d\n", getReply.Y)
 		} else {
-			log.Fatal("Error: worker.call(coordinator.GetReduce) failed. getArgs, getReply: ", getArgs, getReply)
+			fmt.Println("Error: worker.call(coordinator.GetReduce) failed. getArgs, getReply: ", getArgs, getReply)
 		}
 		if getReply.AllReduceDone {
 			break
@@ -106,7 +106,7 @@ func Worker(mapf func(string, string) []KeyValue,
 		if pushok {
 			fmt.Printf("worker successfully sent response of a Reduce task, Y = %d\n", getReply.Y)
 		} else {
-			log.Fatal("Error: worker.call(coordinator.pushReduce) failed. pushArgs, pushReply: ", pushArgs, pushReply)
+			fmt.Println("Error: worker.call(coordinator.pushReduce) failed. pushArgs, pushReply: ", pushArgs, pushReply)
 		}
 		if pushReply.AllReduceDone {
 			break

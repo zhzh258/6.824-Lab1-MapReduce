@@ -4,6 +4,7 @@
 ```bash
 6.824/src/main$ bash my-test.sh
 ```
+Modify NUM_WORKERS to change number of worker
 
 ### Manually
 ```bash
