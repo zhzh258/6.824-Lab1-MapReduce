@@ -69,7 +69,12 @@ func (c *Coordinator) server() {
 func (c *Coordinator) Done() bool {
 	ret := false
 
+	c.MapState.Mu.Lock()
+	c.ReduceState.Mu.Lock()
+	fmt.Println("MapState.AllDone, ReduceState.AllDone: ", c.MapState.AllDone, c.ReduceState.AllDone)
 	ret = c.MapState.AllDone && c.ReduceState.AllDone
+	c.MapState.Mu.Unlock()
+	c.ReduceState.Mu.Unlock()
 	return ret
 }
 
@@ -124,15 +129,17 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 }
 
 func (c *Coordinator) GetMap(args *GetMapArgs, reply *GetMapReply) error {
+	c.MapState.Mu.Lock()
+	var id int = c.findAvailableMap()
+	c.MapState.Mu.Unlock()
 
-	c.Mu.Lock()
-	defer c.Mu.Unlock()
-	if id := c.findAvailableMap(); id != -1 { // case 1. "pending" or "failed" available when Worker calls GetMap()
+	if id != -1 { // case 1. "pending" or "failed" available when Worker calls GetMap()
+		c.Mu.Lock()
+		c.MapState.Mu.Lock()
 		fmt.Printf("New GetMap() request from Map_id=%d received. Current Status: ", id)
 		for id, task := range c.MapState.Tasks {
 			fmt.Printf(" %d-%s ", id, task.Status)
 		}
-
 		fmt.Println()
 		fmt.Println("	has available")
 		// reply
@@ -142,21 +149,22 @@ func (c *Coordinator) GetMap(args *GetMapArgs, reply *GetMapReply) error {
 		reply.Filename = c.MapState.Tasks[id].Filename
 		reply.AllMapDone = c.MapState.AllDone
 		reply.StartTime = time.Now()
-
 		// update c
 		task := c.MapState.Tasks[id]
 		task.Status = "in-progress"
 		task.Attempt = task.Attempt + 1
+		c.Mu.Unlock()
+		c.MapState.Mu.Unlock()
 
 		// set timeout
 		go c.setMapTimeout(id, task.Attempt)
 		return nil
 	} else { // case 2. NO "pending" or "failed" available when Worker calls GetMap()
+		c.MapState.Mu.Lock()
 		fmt.Printf("New GetMap() request from Map_id=%d received. Current Status: ", id)
 		for id, task := range c.MapState.Tasks {
 			fmt.Printf(" %d-%s ", id, task.Status)
 		}
-
 		fmt.Println()
 		fmt.Println("	no available. Sleep......")
 		for c.findAvailableMap() == -1 {
@@ -172,8 +180,7 @@ func (c *Coordinator) GetMap(args *GetMapArgs, reply *GetMapReply) error {
 			Question: Load balancing? Could it be possible that a worker is never assigned a task in its lifecycle???
 		*/
 		// (a) First check whether isAllMapDone()
-		if c.isAllMapDone() {
-			c.MapState.AllDone = true
+		if c.MapState.AllDone == true {
 			reply.AllMapDone = true
 			return nil
 		}
@@ -182,17 +189,18 @@ func (c *Coordinator) GetMap(args *GetMapArgs, reply *GetMapReply) error {
 		if id == -1 { // Is it possible that the newly returned "failed" task be taken by another Map() by getMap()??
 			log.Fatal("BUG: A Map() becomes `failed` because of setMapTimeout(). But when waking up a goroutine, the goroutine cannot find it")
 		}
-
+		// task
 		task := c.MapState.Tasks[id]
 		task.Status = "in-progress"
 		task.Attempt += 1
-
+		// reply
 		reply.AllMapDone = false
 		reply.Filename = task.Filename
 		reply.M = c.M
 		reply.N = c.N
 		reply.X = id
 		reply.StartTime = time.Now()
+		c.MapState.Mu.Unlock()
 		go c.setMapTimeout(id, task.Attempt)
 		return nil
 	}
@@ -216,7 +224,11 @@ func (c *Coordinator) PushMap(args *PushMapArgs, reply *PushMapReply) error {
 	fmt.Println("	The status of this task: ", task.Status)
 	if accepted {
 		task.Status = "complete"
-		reply.AllMapDone = c.isAllMapDone()
+		if c.isAllMapDone() { // the last Map to complete
+			c.MapState.AllDone = true
+			reply.AllMapDone = true     // remember that the default reply is false
+			c.MapState.Cond.Broadcast() // Wake all the blocked worker. They should be able to find out "It's time to Reduce()""
+		}
 		return nil
 	} else { // rejected
 		if task.Status == "complete" || task.Status == "in-progress" {
@@ -231,7 +243,8 @@ func (c *Coordinator) PushMap(args *PushMapArgs, reply *PushMapReply) error {
 	}
 }
 
-func (c *Coordinator) isAllMapDone() bool { // inline. c.Mu has been locked
+func (c *Coordinator) isAllMapDone() bool { // Helper function. Do not lock again in this function. But make sure that MapState has been lock when calling it.
+
 	for _, task := range c.MapState.Tasks {
 		if task.Status != "complete" {
 			return false
@@ -240,18 +253,8 @@ func (c *Coordinator) isAllMapDone() bool { // inline. c.Mu has been locked
 	return true
 }
 
-// func (c *Coordinator) findPendingMap() int {
-// 	for id, task := range c.MapState.Tasks {
-// 		if task.Status == "pending" {
-// 			return id
-// 		}
-// 	}
-// 	return -1
-// }
+func (c *Coordinator) findAvailableMap() int { // Helper function. Do not lock again in this function. But make sure that MapState has been lock when calling it.
 
-func (c *Coordinator) findAvailableMap() int {
-	c.MapState.Mu.Lock()
-	defer c.MapState.Mu.Unlock()
 	for id, task := range c.MapState.Tasks {
 		if task.Status == "pending" || task.Status == "failed" {
 			return id
@@ -260,7 +263,7 @@ func (c *Coordinator) findAvailableMap() int {
 	return -1
 }
 
-func (c *Coordinator) setMapTimeout(id int, launched_by_attempt int) {
+func (c *Coordinator) setMapTimeout(id int, launched_by_attempt int) { // Make sure that MapState is NOT Locked when calling it!!!
 	c.MapState.Mu.Lock()
 	task := c.MapState.Tasks[id]
 	c.MapState.Mu.Unlock()
@@ -270,18 +273,23 @@ func (c *Coordinator) setMapTimeout(id int, launched_by_attempt int) {
 	c.MapState.Mu.Lock()
 	defer c.MapState.Mu.Unlock()
 
+	fmt.Printf("Task id = %d, Task Attempt now = %d, Task launched_by_attempt = %d", id, task.Attempt, launched_by_attempt)
 	if task.Attempt == launched_by_attempt {
 		task.Status = "failed"
 		c.MapState.Cond.Signal()
-	} else {
+	} else { // other process took this task during the 10 seconds
 		c.MapState.Cond.Signal()
 	}
 }
 
 func (c *Coordinator) GetReduce(args *GetReduceArgs, reply *GetReduceReply) error {
-	c.Mu.Lock()
-	defer c.Mu.Unlock()
-	if id := c.findAvailableReduce(); id != -1 { // case 1. "pending" or "failed" available when Worker calls GetReduce()
+	c.ReduceState.Mu.Lock()
+	var id int = c.findAvailableReduce()
+	c.ReduceState.Mu.Unlock()
+
+	if id != -1 { // case 1. "pending" or "failed" available when Worker calls GetReduce()
+		c.Mu.Lock()
+		c.ReduceState.Mu.Lock()
 		fmt.Printf("\nNew GetReduce() request from Reduce_id=%d received. Current Status: ", id)
 		for id, task := range c.ReduceState.Tasks {
 			fmt.Printf(" %d-%s ", id, task.Status)
@@ -294,16 +302,18 @@ func (c *Coordinator) GetReduce(args *GetReduceArgs, reply *GetReduceReply) erro
 		reply.Y = id
 		reply.AllReduceDone = c.ReduceState.AllDone
 		reply.StartTime = time.Now()
-
 		// update c
 		task := c.ReduceState.Tasks[id]
 		task.Status = "in-progress"
 		task.Attempt = task.Attempt + 1
+		c.Mu.Unlock()
+		c.ReduceState.Mu.Unlock()
 
 		// set timeout
 		go c.setReduceTimeout(id, task.Attempt)
 		return nil
 	} else { // case 2. NO "pending" or "failed" available when Worker calls GetReduce()
+		c.ReduceState.Mu.Lock()
 		fmt.Printf("\nNew GetReduce() request from Reduce_id=%d received. Current Status: ", id)
 		for id, task := range c.ReduceState.Tasks {
 			fmt.Printf(" %d-%s ", id, task.Status)
@@ -323,8 +333,7 @@ func (c *Coordinator) GetReduce(args *GetReduceArgs, reply *GetReduceReply) erro
 			Question: Load balancing? Could it be possible that a worker is never assigned a task in its lifecycle???
 		*/
 		// (a) First check whether isAllReduceDone()
-		if c.isAllReduceDone() {
-			c.ReduceState.AllDone = true
+		if c.MapState.AllDone {
 			reply.AllReduceDone = true
 			return nil
 		}
@@ -333,16 +342,18 @@ func (c *Coordinator) GetReduce(args *GetReduceArgs, reply *GetReduceReply) erro
 		if id == -1 { // Is it possible that the newly returned "failed" task be taken by another Reduce() by getReduce()??
 			log.Fatal("BUG: A Reduce() becomes `failed` because of setReduceTimeout(). But when waking up a goroutine, the goroutine cannot find it")
 		}
-
+		// task
 		task := c.ReduceState.Tasks[id]
 		task.Status = "in-progress"
 		task.Attempt += 1
-
+		// reply
 		reply.AllReduceDone = false
 		reply.M = c.M
 		reply.N = c.N
 		reply.Y = id
 		reply.StartTime = time.Now()
+		c.ReduceState.Mu.Unlock()
+
 		go c.setReduceTimeout(id, task.Attempt)
 		return nil
 	}
@@ -354,7 +365,6 @@ func (c *Coordinator) PushReduce(args *PushReduceArgs, reply *PushReduceReply) e
 	defer c.ReduceState.Mu.Unlock()
 	var id int = args.Y
 	task := c.ReduceState.Tasks[id]
-
 	fmt.Printf("\nNew PushReduce() request from Reduce_id=%d received. Current Status: ", id)
 	for id, task := range c.ReduceState.Tasks {
 		fmt.Printf(" %d-%s ", id, task.Status)
@@ -365,7 +375,11 @@ func (c *Coordinator) PushReduce(args *PushReduceArgs, reply *PushReduceReply) e
 	fmt.Println("	The status of this task: ", task.Status)
 	if accepted {
 		task.Status = "complete"
-		reply.AllReduceDone = c.isAllReduceDone()
+		if c.isAllReduceDone() {
+			reply.AllReduceDone = true
+			c.ReduceState.AllDone = true
+			c.ReduceState.Cond.Broadcast()
+		}
 		return nil
 	} else { // rejected
 		if task.Status == "complete" || task.Status == "in-progress" {
@@ -380,7 +394,7 @@ func (c *Coordinator) PushReduce(args *PushReduceArgs, reply *PushReduceReply) e
 	}
 }
 
-func (c *Coordinator) isAllReduceDone() bool { // inline. c.Mu has been locked
+func (c *Coordinator) isAllReduceDone() bool { // Helper function. Do not lock again in this function. But make sure that ReduceState has been lock when calling it.
 	for _, task := range c.ReduceState.Tasks {
 		if task.Status != "complete" {
 			return false
@@ -389,18 +403,7 @@ func (c *Coordinator) isAllReduceDone() bool { // inline. c.Mu has been locked
 	return true
 }
 
-// func (c *Coordinator) findPendingReduce() int {
-// 	for id, task := range c.ReduceState.Tasks {
-// 		if task.Status == "pending" {
-// 			return id
-// 		}
-// 	}
-// 	return -1
-// }
-
-func (c *Coordinator) findAvailableReduce() int {
-	c.ReduceState.Mu.Lock()
-	defer c.ReduceState.Mu.Unlock()
+func (c *Coordinator) findAvailableReduce() int { // Helper function. Do not lock again in this function. But make sure that ReduceState has been lock when calling it.
 	for id, task := range c.ReduceState.Tasks {
 		if task.Status == "pending" || task.Status == "failed" {
 			return id
@@ -409,7 +412,7 @@ func (c *Coordinator) findAvailableReduce() int {
 	return -1
 }
 
-func (c *Coordinator) setReduceTimeout(id int, launched_by_attempt int) {
+func (c *Coordinator) setReduceTimeout(id int, launched_by_attempt int) { // Make sure that ReduceState is NOT locked when calling this function
 	c.ReduceState.Mu.Lock()
 	task := c.ReduceState.Tasks[id]
 	c.ReduceState.Mu.Unlock()

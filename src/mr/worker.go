@@ -53,7 +53,7 @@ func Worker(mapf func(string, string) []KeyValue,
 		getReply := GetMapReply{}
 		getok := call("Coordinator.GetMap", &getArgs, &getReply)
 		if getok {
-			fmt.Printf("worker successfully fetched new Map task, X = %d, Filename = %s\n", getReply.X, getReply.Filename)
+			fmt.Printf("worker successfully fetched new Map task (or blocked till allDone), X = %d, Filename = %s\n", getReply.X, getReply.Filename)
 		} else {
 			log.Fatal("Error: worker.call(coordinator.GetMap) failed. getArgs, getReply: ", getArgs, getReply)
 		}
@@ -88,7 +88,7 @@ func Worker(mapf func(string, string) []KeyValue,
 		getReply := GetReduceReply{}
 		getok := call("Coordinator.GetReduce", &getArgs, &getReply)
 		if getok {
-			fmt.Printf("worker successfully fetched new Reduce task, Y = %d\n", getReply.Y)
+			fmt.Printf("worker successfully fetched new Reduce task (or blocked till allDone), Y = %d\n", getReply.Y)
 		} else {
 			log.Fatal("Error: worker.call(coordinator.GetReduce) failed. getArgs, getReply: ", getArgs, getReply)
 		}
@@ -114,6 +114,7 @@ func Worker(mapf func(string, string) []KeyValue,
 	}
 
 	fmt.Printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\nReduce() all done successfully!!!!!!!!!!!!!\n\n\n\n")
+	fmt.Println("Worker close here......")
 
 	// uncomment to send the Example RPC to the coordinator.
 	// CallExample()
@@ -180,7 +181,7 @@ func mapById(
 	N int,
 	X int,
 ) { // do the X-th Map()
-
+	// generate all mr-X-???
 	// 2. Read the pg.txt and Map()
 	file, err := os.Open(Filename)
 	if err != nil {
@@ -223,7 +224,7 @@ func reduceById(
 	N int,
 	Y int,
 ) { // do the Y-th Map()
-
+	// generate mr-out-Y
 	// 2. Create an output file
 	ofile, err := os.Create(fmt.Sprintf("mr-out-%d", Y))
 	if err != nil {
@@ -231,8 +232,8 @@ func reduceById(
 	}
 	defer ofile.Close()
 	// 3. Read key-value pairs from mr-???-Y (intermediate files) into `kva`. Then sort and Reduce()
+	kva := []KeyValue{}
 	for X := 0; X < M; X++ { // totally M loops. (the Y-th Reduce() task from all the M Map())
-		kva := []KeyValue{}
 		ifile, err := os.Open(fmt.Sprintf("mr-%d-%d", X, Y))
 		if err != nil {
 			fmt.Println("Error in reading mr-???-Y in Reduce(): ", err)
@@ -247,21 +248,21 @@ func reduceById(
 		}
 		// fmt.Printf("The length of kva of file mr-%v-Y is %v\n", X, len(kva))
 		ifile.Close()
-		sort.Sort(ByKey(kva))
+	}
+	sort.Sort(ByKey(kva))
 
-		for i := 0; i < len(kva); {
-			j := i + 1
-			for j < len(kva) && kva[j].Key == kva[i].Key {
-				j++
-			}
-			values := []string{}
-			for k := i; k < j; k++ {
-				values = append(values, kva[k].Value)
-			}
-			output := reducef(kva[i].Key, values)
-			// Fprintf the result into the output file of the Y-th Reduce task. (mr-output-Y)
-			fmt.Fprintf(ofile, "%v %v\n", kva[i].Key, output)
-			i = j
+	for i := 0; i < len(kva); {
+		j := i + 1
+		for j < len(kva) && kva[j].Key == kva[i].Key {
+			j++
 		}
+		values := []string{}
+		for k := i; k < j; k++ {
+			values = append(values, kva[k].Value)
+		}
+		output := reducef(kva[i].Key, values)
+		// Fprintf the result into the output file of the Y-th Reduce task. (mr-output-Y)
+		fmt.Fprintf(ofile, "%v %v\n", kva[i].Key, output)
+		i = j
 	}
 }

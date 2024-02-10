@@ -1,10 +1,15 @@
 # Lab 1 - MapReduce 
 ## How to Run
-### bash 1
+### Script
+```bash
+6.824/src/main$ bash my-test.sh
+```
+
+### Manually
 ```bash
 6.824/src/main$ go run mrcoordinator.go pg*.txt
 ```
-### bash 2
+In another terminal:
 ```bash
 6.824/src/main$ go build -race -buildmode=plugin ../mrapps/wc.go
 6.824/src/main$ go run -race mrworker.go wc.so
@@ -23,7 +28,7 @@
 2. `/main/output/mr/mr-output-Y` - The output of the Y-th Reduce()
 
 
-## Concurrency (It's designed for multiple workers. But currently it works with single worker)
+## Concurrency (This version works with multiple workers! See my-test.sh)
 ### Data Struct Explained
 1. `c.MapState.Tasks[i].Attempt`
 - How many times (any) worker has fetched task i and tried to solve it.
@@ -81,5 +86,17 @@ A:
 ### life Cycle of Coordinator.PushMap()
 1. `accepted` or `rejected` - whether the Map() **complete** a Map(). i.e. the Map task is done permanently.
 2. `if`, `else if`, `else if` - This is because some other workers might process the Map task before it returns a result that is `rejected`
+```C
+if(accepted){
+    if(the_last_task_to_complete){
+        // mark allDone
+        // Cond.Broadcast() 
+    } 
+} 
+else if(rejected){
+    // TODO
+}
+
+```
 
 
