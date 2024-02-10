@@ -44,9 +44,10 @@ func ihash(key string) int {
 //
 func Worker(mapf func(string, string) []KeyValue,
 	reducef func(string, []string) string) {
-
-	var mapAllDone bool = false
-	for mapAllDone == false { // Map task. Map-Task-Id == X (There are M Map() tasks in total)
+	debug_map_counter := 0
+	for { // Map task.
+		debug_map_counter++
+		fmt.Println("debug_map_counter: ", debug_map_counter)
 		// 1. GetMap()
 		getArgs := GetMapArgs{}
 		getReply := GetMapReply{}
@@ -56,23 +57,32 @@ func Worker(mapf func(string, string) []KeyValue,
 		} else {
 			log.Fatal("Error: worker.call(coordinator.GetMap) failed. getArgs, getReply: ", getArgs, getReply)
 		}
-
+		if getReply.AllMapDone {
+			break
+		}
 		// 2. do the map
 		mapById(mapf, reducef, getReply.Filename, getReply.M, getReply.N, getReply.X)
 
 		// 3. PushMap()
-		pushArgs := PushMapArgs{}
-		pushReply := PushMapArgs{}
+		pushArgs := PushMapArgs{X: getReply.X, Successful: true, StartTime: getReply.StartTime}
+		pushReply := PushMapReply{}
 		pushok := call("Coordinator.PushMap", &pushArgs, &pushReply)
 		if pushok {
-			fmt.Printf("worker successfully sent response of a Map task")
+			fmt.Println("worker successfully sent response of a Map task")
 		} else {
 			log.Fatal("Error: worker.call(coordinator.PushMap) failed. pushArgs, pushReply: ", pushArgs, pushReply)
 		}
+		if pushReply.AllMapDone {
+			break
+		}
 	}
 
-	var reduceAllDone bool = false
-	for reduceAllDone == false { // Reduce task. Reduce-task-Id == Y. (There are N reduce tasks in total.)
+	fmt.Printf("Map() all done successfully!!!!!!!!!!!!!\n\n\n\n")
+
+	debug_reduce_counter := 0
+	for { // Reduce task. Reduce-task-Id == Y. (There are N reduce tasks in total.)
+		debug_reduce_counter++
+		fmt.Println("debug_reduce_counter: ", debug_reduce_counter)
 		// 1. GetReduce()
 		getArgs := GetReduceArgs{}
 		getReply := GetReduceReply{}
@@ -82,24 +92,32 @@ func Worker(mapf func(string, string) []KeyValue,
 		} else {
 			log.Fatal("Error: worker.call(coordinator.GetReduce) failed. getArgs, getReply: ", getArgs, getReply)
 		}
+		if getReply.AllReduceDone {
+			break
+		}
 
 		// 2. do the reduce
 		reduceById(mapf, reducef, getReply.M, getReply.N, getReply.Y)
 
 		// 3. PushReduce()
-		pushArgs := GetReduceArgs{}
+		pushArgs := PushReduceArgs{Y: getReply.Y, Successful: true, StartTime: getReply.StartTime}
 		pushReply := GetReduceReply{}
 		pushok := call("Coordinator.PushReduce", &pushArgs, &pushReply)
 		if pushok {
-			fmt.Printf("worker successfully sent response of a Reduce task, Y = %d\n", pushReply.Y)
+			fmt.Printf("worker successfully sent response of a Reduce task, Y = %d\n", getReply.Y)
 		} else {
 			log.Fatal("Error: worker.call(coordinator.pushReduce) failed. pushArgs, pushReply: ", pushArgs, pushReply)
 		}
-
+		if pushReply.AllReduceDone {
+			break
+		}
 	}
+
+	fmt.Printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\nReduce() all done successfully!!!!!!!!!!!!!\n\n\n\n")
 
 	// uncomment to send the Example RPC to the coordinator.
 	// CallExample()
+
 }
 
 //
@@ -180,7 +198,7 @@ func mapById(
 	ofiles := make([]*os.File, N) // The slice to store the entry to all mr-X-???
 	encoders := make([]*json.Encoder, N)
 	for Y := 0; Y < N; Y++ {
-		var filepath string = fmt.Sprintf("%s/mr-%d-%d", "intermediate", X, Y) // mr-X-???
+		var filepath string = fmt.Sprintf("mr-%d-%d", X, Y) // mr-X-???
 		ofiles[Y], err = os.Create(filepath)
 		encoders[Y] = json.NewEncoder(ofiles[Y])
 		if err != nil {
@@ -207,7 +225,7 @@ func reduceById(
 ) { // do the Y-th Map()
 
 	// 2. Create an output file
-	ofile, err := os.Create(fmt.Sprintf("%s/mr-out-%d", "output", Y))
+	ofile, err := os.Create(fmt.Sprintf("mr-out-%d", Y))
 	if err != nil {
 		fmt.Println("Error in outputing mr-output-Y in Reduce(): ", err)
 	}
@@ -215,7 +233,7 @@ func reduceById(
 	// 3. Read key-value pairs from mr-???-Y (intermediate files) into `kva`. Then sort and Reduce()
 	for X := 0; X < M; X++ { // totally M loops. (the Y-th Reduce() task from all the M Map())
 		kva := []KeyValue{}
-		ifile, err := os.Open(fmt.Sprintf("%s/mr-%d-%d", "intermediate", X, Y))
+		ifile, err := os.Open(fmt.Sprintf("mr-%d-%d", X, Y))
 		if err != nil {
 			fmt.Println("Error in reading mr-???-Y in Reduce(): ", err)
 		}

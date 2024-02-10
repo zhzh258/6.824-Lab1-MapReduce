@@ -1,6 +1,7 @@
 package mr
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -11,9 +12,9 @@ import (
 )
 
 type Coordinator struct {
-	// mu            sync.Mutex // the lock
-	M           int // total number of Map() tasks
-	N           int // total number of Reduce() tasks
+	Mu          sync.Mutex // the lock
+	M           int        // total number of Map() tasks
+	N           int        // total number of Reduce() tasks
 	MapState    MapReduceState
 	ReduceState MapReduceState
 }
@@ -26,10 +27,11 @@ type MapReduceState struct {
 }
 
 type TaskState struct {
-	Status    string // "pending", "in-progreee", "complete", "failed"
-	Id        int
-	StartTime time.Time
-	Duration  time.Duration
+	Status      string // "pending", "in-progress", "complete", "failed"
+	Attempt     int
+	Filename    string
+	Id          int
+	MaxDuration time.Duration
 }
 
 //
@@ -67,8 +69,7 @@ func (c *Coordinator) server() {
 func (c *Coordinator) Done() bool {
 	ret := false
 
-	// Your code here.
-
+	ret = c.MapState.AllDone && c.ReduceState.AllDone
 	return ret
 }
 
@@ -99,18 +100,22 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 	// Initialize map tasks
 	for i := 0; i < c.M; i++ {
 		c.MapState.Tasks[i] = &TaskState{
-			Status: "Pending",
-			Id:     i,
-			// StartTime and Duration can be set when the task is actually started
+			Status:      "pending",
+			Attempt:     0,
+			Filename:    files[i],
+			Id:          i,
+			MaxDuration: time.Second * 10,
 		}
 	}
 
 	// Initialize reduce tasks
 	for i := 0; i < c.N; i++ {
 		c.ReduceState.Tasks[i] = &TaskState{
-			Status: "Pending",
-			Id:     i,
-			// StartTime and Duration can be set when the task is actually started
+			Status:      "pending",
+			Attempt:     0,
+			Filename:    "",
+			Id:          i,
+			MaxDuration: time.Second * 10,
 		}
 	}
 
@@ -118,32 +123,306 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 	return c
 }
 
-// Assumptions (for now):
-// 1. Workers never crashes
-// 2. No worker will take extra long time
-
 func (c *Coordinator) GetMap(args *GetMapArgs, reply *GetMapReply) error {
 
-	// fmt.Println("Now running Coordinator.GetMap()...")
-	reply.Filename = "pg-being_ernest.txt"
-	reply.M = 1
-	reply.N = 3
-	reply.X = 0 // It tells the worker which Map() to do
-	return nil
-}
+	c.Mu.Lock()
+	defer c.Mu.Unlock()
+	if id := c.findAvailableMap(); id != -1 { // case 1. "pending" or "failed" available when Worker calls GetMap()
+		fmt.Printf("New GetMap() request from Map_id=%d received. Current Status: ", id)
+		for id, task := range c.MapState.Tasks {
+			fmt.Printf(" %d-%s ", id, task.Status)
+		}
 
-func (c *Coordinator) GetReduce(args *GetReduceArgs, reply *GetReduceReply) error {
-	// fmt.Println("Now running Coordinator.GetReduce()...")
-	reply.M = 1
-	reply.N = 3
-	reply.Y = 0 // It tells the worker which Reduce() to do
-	return nil
+		fmt.Println()
+		fmt.Println("	has available")
+		// reply
+		reply.M = c.M
+		reply.N = c.N
+		reply.X = id
+		reply.Filename = c.MapState.Tasks[id].Filename
+		reply.AllMapDone = c.MapState.AllDone
+		reply.StartTime = time.Now()
+
+		// update c
+		task := c.MapState.Tasks[id]
+		task.Status = "in-progress"
+		task.Attempt = task.Attempt + 1
+
+		// set timeout
+		go c.setMapTimeout(id, task.Attempt)
+		return nil
+	} else { // case 2. NO "pending" or "failed" available when Worker calls GetMap()
+		fmt.Printf("New GetMap() request from Map_id=%d received. Current Status: ", id)
+		for id, task := range c.MapState.Tasks {
+			fmt.Printf(" %d-%s ", id, task.Status)
+		}
+
+		fmt.Println()
+		fmt.Println("	no available. Sleep......")
+		for c.findAvailableMap() == -1 {
+			c.MapState.Cond.Wait() // Zzzzzz
+		}
+		/*
+			What will wake up the Cond()?
+				(a). Cond.Broadcast():
+					- All Map() have been done
+				(b). Cond.Signal():
+					- When another worker returns and in rejected_case_2
+
+			Question: Load balancing? Could it be possible that a worker is never assigned a task in its lifecycle???
+		*/
+		// (a) First check whether isAllMapDone()
+		if c.isAllMapDone() {
+			c.MapState.AllDone = true
+			reply.AllMapDone = true
+			return nil
+		}
+		// (b) Reassign the task
+		id := c.findAvailableMap()
+		if id == -1 { // Is it possible that the newly returned "failed" task be taken by another Map() by getMap()??
+			log.Fatal("BUG: A Map() becomes `failed` because of setMapTimeout(). But when waking up a goroutine, the goroutine cannot find it")
+		}
+
+		task := c.MapState.Tasks[id]
+		task.Status = "in-progress"
+		task.Attempt += 1
+
+		reply.AllMapDone = false
+		reply.Filename = task.Filename
+		reply.M = c.M
+		reply.N = c.N
+		reply.X = id
+		reply.StartTime = time.Now()
+		go c.setMapTimeout(id, task.Attempt)
+		return nil
+	}
+
 }
 
 func (c *Coordinator) PushMap(args *PushMapArgs, reply *PushMapReply) error {
-	return nil
+	c.MapState.Mu.Lock()
+	defer c.MapState.Mu.Unlock()
+	var id int = args.X
+	task := c.MapState.Tasks[id]
+
+	var accepted bool = time.Now().Before(args.StartTime.Add(task.MaxDuration)) && args.Successful
+	fmt.Printf("New PushMap() request from Map_id=%d received. Current Status: ", id)
+	for id, task := range c.MapState.Tasks {
+		fmt.Printf(" %d-%s ", id, task.Status)
+	}
+
+	fmt.Println()
+	fmt.Println("	The request is accepted? ", accepted)
+	fmt.Println("	The status of this task: ", task.Status)
+	if accepted {
+		task.Status = "complete"
+		reply.AllMapDone = c.isAllMapDone()
+		return nil
+	} else { // rejected
+		if task.Status == "complete" || task.Status == "in-progress" {
+			// no need to do anything. Another Worker has taken care of the failed task.
+			return nil
+		} else if task.Status == "failed" {
+			c.MapState.Cond.Signal() // Question: What if there are NO blocked Worker available
+		} else if task.Status == "pending" {
+			log.Fatal("BUG: task.Status==pending at pushMap")
+		}
+		return nil
+	}
+}
+
+func (c *Coordinator) isAllMapDone() bool { // inline. c.Mu has been locked
+	for _, task := range c.MapState.Tasks {
+		if task.Status != "complete" {
+			return false
+		}
+	}
+	return true
+}
+
+// func (c *Coordinator) findPendingMap() int {
+// 	for id, task := range c.MapState.Tasks {
+// 		if task.Status == "pending" {
+// 			return id
+// 		}
+// 	}
+// 	return -1
+// }
+
+func (c *Coordinator) findAvailableMap() int {
+	c.MapState.Mu.Lock()
+	defer c.MapState.Mu.Unlock()
+	for id, task := range c.MapState.Tasks {
+		if task.Status == "pending" || task.Status == "failed" {
+			return id
+		}
+	}
+	return -1
+}
+
+func (c *Coordinator) setMapTimeout(id int, launched_by_attempt int) {
+	c.MapState.Mu.Lock()
+	task := c.MapState.Tasks[id]
+	c.MapState.Mu.Unlock()
+
+	time.Sleep(task.MaxDuration) // 10 seconds later...
+
+	c.MapState.Mu.Lock()
+	defer c.MapState.Mu.Unlock()
+
+	if task.Attempt == launched_by_attempt {
+		task.Status = "failed"
+		c.MapState.Cond.Signal()
+	} else {
+		c.MapState.Cond.Signal()
+	}
+}
+
+func (c *Coordinator) GetReduce(args *GetReduceArgs, reply *GetReduceReply) error {
+	c.Mu.Lock()
+	defer c.Mu.Unlock()
+	if id := c.findAvailableReduce(); id != -1 { // case 1. "pending" or "failed" available when Worker calls GetReduce()
+		fmt.Printf("\nNew GetReduce() request from Reduce_id=%d received. Current Status: ", id)
+		for id, task := range c.ReduceState.Tasks {
+			fmt.Printf(" %d-%s ", id, task.Status)
+		}
+		fmt.Println()
+		fmt.Println("	has available")
+		// reply
+		reply.M = c.M
+		reply.N = c.N
+		reply.Y = id
+		reply.AllReduceDone = c.ReduceState.AllDone
+		reply.StartTime = time.Now()
+
+		// update c
+		task := c.ReduceState.Tasks[id]
+		task.Status = "in-progress"
+		task.Attempt = task.Attempt + 1
+
+		// set timeout
+		go c.setReduceTimeout(id, task.Attempt)
+		return nil
+	} else { // case 2. NO "pending" or "failed" available when Worker calls GetReduce()
+		fmt.Printf("\nNew GetReduce() request from Reduce_id=%d received. Current Status: ", id)
+		for id, task := range c.ReduceState.Tasks {
+			fmt.Printf(" %d-%s ", id, task.Status)
+		}
+		fmt.Println()
+		fmt.Println("	NO available. sleep......")
+		for c.findAvailableReduce() == -1 {
+			c.ReduceState.Cond.Wait() // Zzzzzz
+		}
+		/*
+			What will wake up the Cond()?
+				(a). Cond.Broadcast():
+					- All Reduce() have been done
+				(b). Cond.Signal():
+					- When another worker returns and in rejected_case_2
+
+			Question: Load balancing? Could it be possible that a worker is never assigned a task in its lifecycle???
+		*/
+		// (a) First check whether isAllReduceDone()
+		if c.isAllReduceDone() {
+			c.ReduceState.AllDone = true
+			reply.AllReduceDone = true
+			return nil
+		}
+		// (b) Reassign the task
+		id := c.findAvailableReduce()
+		if id == -1 { // Is it possible that the newly returned "failed" task be taken by another Reduce() by getReduce()??
+			log.Fatal("BUG: A Reduce() becomes `failed` because of setReduceTimeout(). But when waking up a goroutine, the goroutine cannot find it")
+		}
+
+		task := c.ReduceState.Tasks[id]
+		task.Status = "in-progress"
+		task.Attempt += 1
+
+		reply.AllReduceDone = false
+		reply.M = c.M
+		reply.N = c.N
+		reply.Y = id
+		reply.StartTime = time.Now()
+		go c.setReduceTimeout(id, task.Attempt)
+		return nil
+	}
+
 }
 
 func (c *Coordinator) PushReduce(args *PushReduceArgs, reply *PushReduceReply) error {
-	return nil
+	c.ReduceState.Mu.Lock()
+	defer c.ReduceState.Mu.Unlock()
+	var id int = args.Y
+	task := c.ReduceState.Tasks[id]
+
+	fmt.Printf("\nNew PushReduce() request from Reduce_id=%d received. Current Status: ", id)
+	for id, task := range c.ReduceState.Tasks {
+		fmt.Printf(" %d-%s ", id, task.Status)
+	}
+	var accepted bool = time.Now().Before(args.StartTime.Add(task.MaxDuration)) && args.Successful
+	fmt.Println()
+	fmt.Println("	The request is accepted? ", accepted)
+	fmt.Println("	The status of this task: ", task.Status)
+	if accepted {
+		task.Status = "complete"
+		reply.AllReduceDone = c.isAllReduceDone()
+		return nil
+	} else { // rejected
+		if task.Status == "complete" || task.Status == "in-progress" {
+			// no need to do anything. Another Worker has taken care of the failed task.
+			return nil
+		} else if task.Status == "failed" {
+			c.ReduceState.Cond.Signal() // Question: What if there are NO blocked Worker available
+		} else if task.Status == "pending" {
+			log.Fatal("BUG: task.Status==pending at pushReduce")
+		}
+		return nil
+	}
+}
+
+func (c *Coordinator) isAllReduceDone() bool { // inline. c.Mu has been locked
+	for _, task := range c.ReduceState.Tasks {
+		if task.Status != "complete" {
+			return false
+		}
+	}
+	return true
+}
+
+// func (c *Coordinator) findPendingReduce() int {
+// 	for id, task := range c.ReduceState.Tasks {
+// 		if task.Status == "pending" {
+// 			return id
+// 		}
+// 	}
+// 	return -1
+// }
+
+func (c *Coordinator) findAvailableReduce() int {
+	c.ReduceState.Mu.Lock()
+	defer c.ReduceState.Mu.Unlock()
+	for id, task := range c.ReduceState.Tasks {
+		if task.Status == "pending" || task.Status == "failed" {
+			return id
+		}
+	}
+	return -1
+}
+
+func (c *Coordinator) setReduceTimeout(id int, launched_by_attempt int) {
+	c.ReduceState.Mu.Lock()
+	task := c.ReduceState.Tasks[id]
+	c.ReduceState.Mu.Unlock()
+
+	time.Sleep(task.MaxDuration) // 10 seconds later...
+
+	c.ReduceState.Mu.Lock()
+	defer c.ReduceState.Mu.Unlock()
+
+	if task.Attempt == launched_by_attempt {
+		task.Status = "failed"
+		c.ReduceState.Cond.Signal()
+	} else {
+		c.ReduceState.Cond.Signal()
+	}
 }

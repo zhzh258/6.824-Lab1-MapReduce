@@ -9,6 +9,7 @@ package mr
 import (
 	"os"
 	"strconv"
+	"time"
 )
 
 //
@@ -28,33 +29,43 @@ type GetMapArgs struct {
 }
 
 type GetMapReply struct {
-	Filename string
-	M        int
-	N        int
-	X        int // the Map task id
-
+	Filename   string
+	M          int
+	N          int
+	X          int // the Map task id
+	AllMapDone bool
+	StartTime  time.Time
 }
 
 type PushMapArgs struct {
+	X          int
+	Successful bool // true if Worker.Map() succeeded to execute
+	StartTime  time.Time
 }
 
 type PushMapReply struct {
+	AllMapDone bool
 }
 
 type GetReduceArgs struct {
 }
 
 type GetReduceReply struct {
-	M int
-	N int
-	Y int // the Reduce task id
+	M             int
+	N             int
+	Y             int // the Reduce task id
+	AllReduceDone bool
+	StartTime     time.Time
 }
 
-// Add your RPC definitions here.
 type PushReduceArgs struct {
+	Y          int
+	Successful bool // true if Worker.Reduce() succeeded to execute
+	StartTime  time.Time
 }
 
 type PushReduceReply struct {
+	AllReduceDone bool
 }
 
 // Cook up a unique-ish UNIX-domain socket name
