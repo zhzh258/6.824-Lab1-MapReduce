@@ -9,7 +9,7 @@ echo "Starting the coordinator..."
 
 sleep 5
 
-NUM_WORKERS=5
+NUM_WORKERS=3
 for(( i = 0; i < NUM_WORKERS; i++)); do
     echo "Starting worker $i..."
     (go run -race mrworker.go wc.so 2>&1 | sed "s/^/[Worker $i] /" ) &
@@ -17,3 +17,5 @@ done
 
 wait
 echo "All processes have completed"
+
+rm -rf mr-[0-9]-[0-9]

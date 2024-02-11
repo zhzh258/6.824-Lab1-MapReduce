@@ -47,13 +47,13 @@ func Worker(mapf func(string, string) []KeyValue,
 	debug_map_counter := 0
 	for { // Map task.
 		debug_map_counter++
-		fmt.Println("debug_map_counter: ", debug_map_counter)
+		// fmt.Println("debug_map_counter: ", debug_map_counter)
 		// 1. GetMap()
 		getArgs := GetMapArgs{}
 		getReply := GetMapReply{}
 		getok := call("Coordinator.GetMap", &getArgs, &getReply)
 		if getok {
-			fmt.Printf("worker successfully fetched new Map task (or blocked till allDone), X = %d, Filename = %s\n", getReply.X, getReply.Filename)
+			fmt.Printf("Worker.GetMap() done. Reply: X = %v | AllMapDone = %v\n", getReply.X, getReply.AllMapDone)
 		} else {
 			log.Fatal("Error: worker.call(coordinator.GetMap) failed. getArgs, getReply: ", getArgs, getReply)
 		}
@@ -68,7 +68,7 @@ func Worker(mapf func(string, string) []KeyValue,
 		pushReply := PushMapReply{}
 		pushok := call("Coordinator.PushMap", &pushArgs, &pushReply)
 		if pushok {
-			fmt.Println("worker successfully sent response of a Map task")
+			fmt.Printf("Worker.PushMap() done. Reply: AllMapDone = %v\n", pushReply.AllMapDone)
 		} else {
 			log.Fatal("Error: worker.call(coordinator.PushMap) failed. pushArgs, pushReply: ", pushArgs, pushReply)
 		}
@@ -82,13 +82,13 @@ func Worker(mapf func(string, string) []KeyValue,
 	debug_reduce_counter := 0
 	for { // Reduce task. Reduce-task-Id == Y. (There are N reduce tasks in total.)
 		debug_reduce_counter++
-		fmt.Println("debug_reduce_counter: ", debug_reduce_counter)
+		// fmt.Println("debug_reduce_counter: ", debug_reduce_counter)
 		// 1. GetReduce()
 		getArgs := GetReduceArgs{}
 		getReply := GetReduceReply{}
 		getok := call("Coordinator.GetReduce", &getArgs, &getReply)
 		if getok {
-			fmt.Printf("worker successfully fetched new Reduce task (or blocked till allDone), Y = %d\n", getReply.Y)
+			fmt.Printf("Worker.GetReduce() done. Reply: Y = %v | AllReduceDone = %v\n", getReply.Y, getReply.AllReduceDone)
 		} else {
 			fmt.Println("Error: worker.call(coordinator.GetReduce) failed. getArgs, getReply: ", getArgs, getReply)
 		}
@@ -104,7 +104,7 @@ func Worker(mapf func(string, string) []KeyValue,
 		pushReply := GetReduceReply{}
 		pushok := call("Coordinator.PushReduce", &pushArgs, &pushReply)
 		if pushok {
-			fmt.Printf("worker successfully sent response of a Reduce task, Y = %d\n", getReply.Y)
+			fmt.Printf("Worker.PushReduce() done. Reply: AllReduceDone = %v\n", pushReply.AllReduceDone)
 		} else {
 			fmt.Println("Error: worker.call(coordinator.pushReduce) failed. pushArgs, pushReply: ", pushArgs, pushReply)
 		}
@@ -113,9 +113,8 @@ func Worker(mapf func(string, string) []KeyValue,
 		}
 	}
 
-	fmt.Printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\nReduce() all done successfully!!!!!!!!!!!!!\n\n\n\n")
+	fmt.Printf("!!!!!!!!!!!!!!!!!!!!!!\n\n\n\nReduce() all done successfully!!!!!!!!!!!!!!!!!!!\n\n\n\n")
 	fmt.Println("Worker close here......")
-
 	// uncomment to send the Example RPC to the coordinator.
 	// CallExample()
 

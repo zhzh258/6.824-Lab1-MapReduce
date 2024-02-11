@@ -1,10 +1,11 @@
 # Lab 1 - MapReduce 
 ## How to Run
-### Script
+### My test
 ```bash
 6.824/src/main$ bash my-test.sh
 ```
-Modify NUM_WORKERS to change number of worker
+- Modify NUM_WORKERS to change number of worker
+- It runs 1 coordinator, and several worker in the background. And integrate their output in current terminal.
 
 ### Manually
 ```bash
@@ -29,15 +30,49 @@ In another terminal:
 2. `/main/output/mr/mr-output-Y` - The output of the Y-th Reduce()
 
 
-## Concurrency (This version works with multiple workers! See my-test.sh)
+## Concurrency (This version works with multiple workers (without crash tho). See my-test.sh)
 ### Data Struct Explained
-1. `c.MapState.Tasks[i].Attempt`
-- How many times (any) worker has fetched task i and tried to solve it.
+``` go
+type Coordinator struct {
+	Mu          sync.Mutex // the lock
+	M           int        // total number of Map() tasks
+	N           int        // total number of Reduce() tasks
+	MapState    MapReduceState
+	ReduceState MapReduceState
+}
+
+type MapReduceState struct {
+	Tasks   map[int]*TaskState
+	Mu      sync.Mutex
+	Cond    *sync.Cond
+	AllDone bool
+}
+
+type TaskState struct {
+	Status      string // "pending", "in-progress", "complete", "failed"
+	Attempt     int
+	Filename    string
+	Id          int
+	MaxDuration time.Duration
+}
+```
+1. `MapState.allDone`
+- Whether all tasks are `complete`
+- Once set to `true`, don't modify it anymore.
 2. `GetMaoReply.StartTime` or `PushMapResponse.StartTime`
 - The time (on Coordinator) a task was sent to worker.
 - It persists when worker is executing doMapById() and will be returned to Coordinator.
-	
-
+3. `TaskState.Status`
+    1. `pending`: A task that has never been sent to a worker. "pending" is available
+    2. `in-progress`: A task is currently occupied by a worker.
+    3. `failed`: A task that was attempted by a worker but fail (because of 10 seconds timeout or worker-side crash). "failed" is available
+	4. `complete`: A task that has been done. Don't use with it anymore.
+4. `TaskState.Id`
+- Constant. Do not modify this.
+5. `TaskState.MaxDuration`
+- 10 seconds
+6. `TaskState.Attempt`
+- How many times (any) worker has fetched task i and tried to solve it.
 
 
 ### Life Cycle of A Worker
@@ -69,10 +104,10 @@ if(no_map_to_do){
     // Zzzzzzzzzzz
     // onWoken:
     if(woken_by_case_a){
-        // done
+        // Map stage done
     }
     else if(woken_by_case_b){
-        // assign the failed Map() to a blocked worker
+        // assign the failed Map() to a sleeping worker
     }
 
 }
@@ -85,19 +120,180 @@ A:
         - When another worker returns and in rejected_case_2
 
 ### life Cycle of Coordinator.PushMap()
-1. `accepted` or `rejected` - whether the Map() **complete** a Map(). i.e. the Map task is done permanently.
-2. `if`, `else if`, `else if` - This is because some other workers might process the Map task before it returns a result that is `rejected`
 ```C
 if(accepted){
     if(the_last_task_to_complete){
-        // mark allDone
-        // Cond.Broadcast() 
+        c.MapState.allDone = true
+        Cond.Broadcast() // tell the sleeping worker: MapState.allDone is true. Time for Reduce stage.
     } 
 } 
 else if(rejected){
-    // TODO
+    // rejected because timeout or worker-side crash
 }
 
 ```
+1. `accepted` or `rejected` - whether the Map() **complete** a Map(). i.e. the Map task is done permanently.
+2. `if`, `else if`, `else if` - This is because some other workers might process the Map task before it returns a result that is `rejected`
 
 
+## Sample Terminal Output
+``` bash
+/home/nonox/Desktop/project/6.824/src/main
+Building wc.go plugin...
+Starting the coordinator...
+Starting worker 0...
+Starting worker 1...
+Starting worker 2...
+[Coordinator] 20:43:22 | GetMap() -> 3 | Current Status:  6-pending  7-pending  0-pending  1-pending  2-pending  3-pending  4-pending  5-pending 
+[Worker 2] Worker.GetMap() done. Reply: X = 3 | AllMapDone = false
+[Coordinator] 20:43:22 | GetMap() -> 7 | Current Status:  2-pending  3-in-progress  4-pending  5-pending  6-pending  7-pending  0-pending  1-pending 
+[Worker 1] Worker.GetMap() done. Reply: X = 7 | AllMapDone = false
+[Coordinator] 20:43:22 | GetMap() -> 6 | Current Status:  3-in-progress  4-pending  5-pending  6-pending  7-in-progress  0-pending  1-pending  2-pending 
+[Worker 0] Worker.GetMap() done. Reply: X = 6 | AllMapDone = false
+[Coordinator] 20:43:23 | PushMap(7) | Current Status:  7-in-progress  0-pending  1-pending  2-pending  3-in-progress  4-pending  5-pending  6-in-progress 
+[Coordinator]   Accepted?  true
+[Worker 1] Worker.PushMap() done. Reply: AllMapDone = false
+[Coordinator] 20:43:23 | GetMap() -> 0 | Current Status:  6-in-progress  7-complete  0-pending  1-pending  2-pending  3-in-progress  4-pending  5-pending 
+[Worker 1] Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+[Coordinator] 20:43:24 | PushMap(3) | Current Status:  0-in-progress  1-pending  2-pending  3-in-progress  4-pending  5-pending  6-in-progress  7-complete 
+[Coordinator]   Accepted?  true
+[Worker 2] Worker.PushMap() done. Reply: AllMapDone = false
+[Coordinator] 20:43:24 | GetMap() -> 5 | Current Status:  5-pending  6-in-progress  7-complete  0-in-progress  1-pending  2-pending  3-complete  4-pending 
+[Worker 2] Worker.GetMap() done. Reply: X = 5 | AllMapDone = false
+[Coordinator] 20:43:24 | PushMap(0) | Current Status:  7-complete  0-in-progress  1-pending  2-pending  3-complete  4-pending  5-in-progress  6-in-progress 
+[Coordinator]   Accepted?  true
+[Worker 1] Worker.PushMap() done. Reply: AllMapDone = false
+[Coordinator] 20:43:24 | GetMap() -> 1 | Current Status:  7-complete  0-complete  1-pending  2-pending  3-complete  4-pending  5-in-progress  6-in-progress 
+[Worker 1] Worker.GetMap() done. Reply: X = 1 | AllMapDone = false
+[Coordinator] 20:43:24 | PushMap(6) | Current Status:  0-complete  1-in-progress  2-pending  3-complete  4-pending  5-in-progress  6-in-progress  7-complete 
+[Coordinator]   Accepted?  true
+[Worker 0] Worker.PushMap() done. Reply: AllMapDone = false
+[Coordinator] 20:43:24 | GetMap() -> 4 | Current Status:  6-complete  7-complete  0-complete  1-in-progress  2-pending  3-complete  4-pending  5-in-progress 
+[Worker 0] Worker.GetMap() done. Reply: X = 4 | AllMapDone = false
+[Coordinator] 20:43:25 | PushMap(5) | Current Status:  1-in-progress  2-pending  3-complete  4-in-progress  5-in-progress  6-complete  7-complete  0-complete 
+[Coordinator]   Accepted?  true
+[Worker 2] Worker.PushMap() done. Reply: AllMapDone = false
+[Coordinator] 20:43:25 | GetMap() -> 2 | Current Status:  6-complete  7-complete  0-complete  1-in-progress  2-pending  3-complete  4-in-progress  5-complete 
+[Worker 2] Worker.GetMap() done. Reply: X = 2 | AllMapDone = false
+[Coordinator] 20:43:26 | PushMap(4) | Current Status:  3-complete  4-in-progress  5-complete  6-complete  7-complete  0-complete  1-in-progress  2-in-progress 
+[Coordinator]   Accepted?  true
+[Worker 0] Worker.PushMap() done. Reply: AllMapDone = false
+[Coordinator] 20:43:26 | GetMap() -> -1 | Current Status:  3-complete  4-complete  5-complete  6-complete  7-complete  0-complete  1-in-progress  2-in-progress 
+[Coordinator]   GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+[Coordinator] 20:43:26 | PushMap(1) | Current Status:  3-complete  4-complete  5-complete  6-complete  7-complete  0-complete  1-in-progress  2-in-progress 
+[Coordinator]   Accepted?  true
+[Worker 1] Worker.PushMap() done. Reply: AllMapDone = false
+[Coordinator] 20:43:26 | GetMap() -> -1 | Current Status:  1-complete  2-in-progress  3-complete  4-complete  5-complete  6-complete  7-complete  0-complete 
+[Coordinator]   GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+[Coordinator] 20:43:28 | PushMap(2) | Current Status:  1-complete  2-in-progress  3-complete  4-complete  5-complete  6-complete  7-complete  0-complete 
+[Coordinator]   Accepted?  true
+[Coordinator] All map have been done. broadcasting...
+[Coordinator]   GetMap() -> -1 wakes up. MapState.AllDone: true
+[Worker 2] Worker.PushMap() done. Reply: AllMapDone = true
+[Worker 2] Map() all done successfully!!!!!!!!!!!!!
+[Worker 2] 
+[Worker 0] Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+[Worker 1] Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+[Worker 1] Map() all done successfully!!!!!!!!!!!!!
+[Worker 0] Map() all done successfully!!!!!!!!!!!!!
+[Worker 0] 
+[Worker 0] 
+[Worker 0] 
+[Coordinator]   GetMap() -> -1 wakes up. MapState.AllDone: true
+[Worker 1] 
+[Worker 1] 
+[Worker 1] 
+[Worker 2] 
+[Worker 2] 
+[Coordinator] 20:43:28 | GetReduce() -> 3 | Current Status:  7-pending  9-pending  0-pending  2-pending  4-pending  5-pending  1-pending  3-pending  6-pending  8-pending 
+[Coordinator] 20:43:28 | GetReduce() -> 6 | Current Status:  1-pending  3-in-progress  6-pending  8-pending  9-pending  0-pending  2-pending  4-pending  5-pending  7-pending 
+[Worker 0] Worker.GetReduce() done. Reply: Y = 3 | AllReduceDone = false
+[Worker 1] Worker.GetReduce() done. Reply: Y = 6 | AllReduceDone = false
+[Coordinator] 20:43:28 | GetReduce() -> 1 | Current Status:  5-pending  7-pending  9-pending  0-pending  2-pending  4-pending  8-pending  1-pending  3-in-progress  6-in-progress 
+[Worker 2] Worker.GetReduce() done. Reply: Y = 1 | AllReduceDone = false
+[Coordinator] 20:43:28 | PushReduce(1) | Current Status:  1-in-progress  3-in-progress  6-in-progress  8-pending  0-pending  2-pending  4-pending  5-pending  7-pending  9-pending 
+[Coordinator]   Accepted?  true
+[Worker 2] Worker.PushReduce() done. Reply: AllReduceDone = false
+[Coordinator] 20:43:28 | GetReduce() -> 8 | Current Status:  4-pending  5-pending  7-pending  9-pending  0-pending  2-pending  6-in-progress  8-pending  1-complete  3-in-progress 
+[Worker 2] Worker.GetReduce() done. Reply: Y = 8 | AllReduceDone = false
+[Coordinator] 20:43:28 | PushReduce(3) | Current Status:  1-complete  3-in-progress  6-in-progress  8-in-progress  0-pending  2-pending  4-pending  5-pending  7-pending  9-pending 
+[Coordinator]   Accepted?  true
+[Worker 0] Worker.PushReduce() done. Reply: AllReduceDone = false
+[Coordinator] 20:43:28 | GetReduce() -> 2 | Current Status:  9-pending  0-pending  2-pending  4-pending  5-pending  7-pending  1-complete  3-complete  6-in-progress  8-in-progress 
+[Worker 0] Worker.GetReduce() done. Reply: Y = 2 | AllReduceDone = false
+[Coordinator] 20:43:29 | PushReduce(6) | Current Status:  9-pending  0-pending  2-in-progress  4-pending  5-pending  7-pending  1-complete  3-complete  6-in-progress  8-in-progress 
+[Coordinator]   Accepted?  true
+[Worker 1] Worker.PushReduce() done. Reply: AllReduceDone = false
+[Coordinator] 20:43:29 | GetReduce() -> 4 | Current Status:  7-pending  9-pending  0-pending  2-in-progress  4-pending  5-pending  1-complete  3-complete  6-complete  8-in-progress 
+[Worker 1] Worker.GetReduce() done. Reply: Y = 4 | AllReduceDone = false
+[Coordinator] 20:43:29 | PushReduce(8) | Current Status:  9-pending  0-pending  2-in-progress  4-in-progress  5-pending  7-pending  1-complete  3-complete  6-complete  8-in-progress 
+[Coordinator]   Accepted?  true
+[Worker 2] Worker.PushReduce() done. Reply: AllReduceDone = false
+[Coordinator] 20:43:29 | GetReduce() -> 5 | Current Status:  1-complete  3-complete  6-complete  8-complete  9-pending  0-pending  2-in-progress  4-in-progress  5-pending  7-pending 
+[Worker 2] Worker.GetReduce() done. Reply: Y = 5 | AllReduceDone = false
+[Coordinator] 20:43:29 | PushReduce(2) | Current Status:  9-pending  0-pending  2-in-progress  4-in-progress  5-in-progress  7-pending  1-complete  3-complete  6-complete  8-complete 
+[Coordinator]   Accepted?  true
+[Coordinator] 20:43:29 | GetReduce() -> 7 | Current Status:  8-complete  1-complete  3-complete  6-complete  5-in-progress  7-pending  9-pending  0-pending  2-complete  4-in-progress 
+[Worker 0] Worker.PushReduce() done. Reply: AllReduceDone = false
+[Worker 0] Worker.GetReduce() done. Reply: Y = 7 | AllReduceDone = false
+[Coordinator] 20:43:29 | PushReduce(5) | Current Status:  1-complete  3-complete  6-complete  8-complete  9-pending  0-pending  2-complete  4-in-progress  5-in-progress  7-in-progress 
+[Coordinator]   Accepted?  true
+[Worker 2] Worker.PushReduce() done. Reply: AllReduceDone = false
+[Coordinator] 20:43:29 | GetReduce() -> 0 | Current Status:  1-complete  3-complete  6-complete  8-complete  7-in-progress  9-pending  0-pending  2-complete  4-in-progress  5-complete 
+[Worker 2] Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = false
+[Coordinator] 20:43:29 | PushReduce(7) | Current Status:  3-complete  6-complete  8-complete  1-complete  2-complete  4-in-progress  5-complete  7-in-progress  9-pending  0-in-progress 
+[Coordinator]   Accepted?  true
+[Coordinator] 20:43:29 | GetReduce() -> 9 | Current Status:  6-complete  8-complete  1-complete  3-complete  4-in-progress  5-complete  7-complete  9-pending  0-in-progress  2-complete 
+[Worker 0] Worker.PushReduce() done. Reply: AllReduceDone = false
+[Worker 0] Worker.GetReduce() done. Reply: Y = 9 | AllReduceDone = false
+[Coordinator] 20:43:29 | PushReduce(4) | Current Status:  1-complete  3-complete  6-complete  8-complete  7-complete  9-in-progress  0-in-progress  2-complete  4-in-progress  5-complete 
+[Coordinator]   Accepted?  true
+[Worker 1] Worker.PushReduce() done. Reply: AllReduceDone = false
+[Coordinator] 20:43:29 | GetReduce() -> -1 | Current Status:  2-complete  4-complete  5-complete  7-complete  9-in-progress  0-in-progress  3-complete  6-complete  8-complete  1-complete 
+[Coordinator]   GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+[Coordinator] 20:43:30 | PushReduce(0) | Current Status:  4-complete  5-complete  7-complete  9-in-progress  0-in-progress  2-complete  6-complete  8-complete  1-complete  3-complete 
+[Coordinator]   Accepted?  true
+[Worker 2] Worker.PushReduce() done. Reply: AllReduceDone = false
+[Coordinator] 20:43:30 | GetReduce() -> -1 | Current Status:  1-complete  3-complete  6-complete  8-complete  9-in-progress  0-complete  2-complete  4-complete  5-complete  7-complete 
+[Coordinator]   GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+[Coordinator] 20:43:30 | PushReduce(9) | Current Status:  2-complete  4-complete  5-complete  7-complete  9-in-progress  0-complete  3-complete  6-complete  8-complete  1-complete 
+[Coordinator]   Accepted?  true
+[Coordinator]   GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+[Coordinator]   GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+[Worker 1] Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+[Worker 0] Worker.PushReduce() done. Reply: AllReduceDone = true
+[Worker 1] !!!!!!!!!!!!!!!!!!!!!!
+[Worker 1] 
+[Worker 1] 
+[Worker 1] 
+[Worker 1] Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+[Worker 1] 
+[Worker 1] 
+[Worker 1] 
+[Worker 1] Worker close here......
+[Worker 0] !!!!!!!!!!!!!!!!!!!!!!
+[Worker 0] 
+[Worker 0] 
+[Worker 0] 
+[Worker 0] Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+[Worker 0] 
+[Worker 0] 
+[Worker 0] 
+[Worker 0] Worker close here......
+[Worker 2] Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+[Worker 2] !!!!!!!!!!!!!!!!!!!!!!
+[Worker 2] 
+[Worker 2] 
+[Worker 2] 
+[Worker 2] Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+[Worker 2] 
+[Worker 2] 
+[Worker 2] 
+[Worker 2] Worker close here......
+[Coordinator] ~~~~~~~~~~~Coordinator ends here with c.ReduceState.AllDone == true~~~~~~~~~~~
+All processes have completed
+```
+
+## TODO
+1. Add logic to handle coordinator/worker error. Instead of just using 2 for loops in worker.
+2. Test and debug the program with different mrapp, especially those with worker-side error. 
