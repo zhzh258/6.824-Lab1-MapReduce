@@ -1,0 +1,1003 @@
+*** Starting wc test.
+16:08:09 | GetMap() -> 6 | Current Status:  2-pending  3-pending  4-pending  5-pending  6-pending  7-pending  0-pending  1-pending 
+16:08:09 | GetMap() -> 1 | Current Status:  1-pending  2-pending  3-pending  4-pending  5-pending  6-in-progress  7-pending  0-pending 
+16:08:09 | GetMap() -> 2 | Current Status:  3-pending  4-pending  5-pending  6-in-progress  7-pending  0-pending  1-in-progress  2-pending 
+Worker.GetMap() done. Reply: X = 1 | AllMapDone = false
+Worker.GetMap() done. Reply: X = 2 | AllMapDone = false
+Worker.GetMap() done. Reply: X = 6 | AllMapDone = false
+16:08:10 | PushMap(2) | Current Status:  5-pending  6-in-progress  7-pending  0-pending  1-in-progress  2-in-progress  3-pending  4-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:10 | GetMap() -> 0 | Current Status:  7-pending  0-pending  1-in-progress  2-complete  3-pending  4-pending  5-pending  6-in-progress 
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+16:08:10 | PushMap(0) | Current Status:  7-pending  0-in-progress  1-in-progress  2-complete  3-pending  4-pending  5-pending  6-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:10 | GetMap() -> 5 | Current Status:  3-pending  4-pending  5-pending  6-in-progress  7-pending  0-complete  1-in-progress  2-complete 
+Worker.GetMap() done. Reply: X = 5 | AllMapDone = false
+16:08:11 | PushMap(1) | Current Status:  4-pending  5-in-progress  6-in-progress  7-pending  0-complete  1-in-progress  2-complete  3-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:11 | GetMap() -> 3 | Current Status:  6-in-progress  7-pending  0-complete  1-complete  2-complete  3-pending  4-pending  5-in-progress 
+Worker.GetMap() done. Reply: X = 3 | AllMapDone = false
+16:08:11 | PushMap(5) | Current Status:  0-complete  1-complete  2-complete  3-in-progress  4-pending  5-in-progress  6-in-progress  7-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:11 | GetMap() -> 7 | Current Status:  7-pending  0-complete  1-complete  2-complete  3-in-progress  4-pending  5-complete  6-in-progress 
+Worker.GetMap() done. Reply: X = 7 | AllMapDone = false
+16:08:11 | PushMap(6) | Current Status:  2-complete  3-in-progress  4-pending  5-complete  6-in-progress  7-in-progress  0-complete  1-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:11 | GetMap() -> 4 | Current Status:  0-complete  1-complete  2-complete  3-in-progress  4-pending  5-complete  6-complete  7-in-progress 
+Worker.GetMap() done. Reply: X = 4 | AllMapDone = false
+16:08:12 | PushMap(7) | Current Status:  6-complete  7-in-progress  0-complete  1-complete  2-complete  3-in-progress  4-in-progress  5-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:12 | GetMap() -> -1 | Current Status:  0-complete  1-complete  2-complete  3-in-progress  4-in-progress  5-complete  6-complete  7-complete 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:08:12 | PushMap(3) | Current Status:  6-complete  7-complete  0-complete  1-complete  2-complete  3-in-progress  4-in-progress  5-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:12 | GetMap() -> -1 | Current Status:  5-complete  6-complete  7-complete  0-complete  1-complete  2-complete  3-complete  4-in-progress 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:08:13 | PushMap(4) | Current Status:  7-complete  0-complete  1-complete  2-complete  3-complete  4-in-progress  5-complete  6-complete 
+        Accepted?  true
+All map have been done. broadcasting...
+        GetMap() -> -1 wakes up. MapState.AllDone: true
+        GetMap() -> -1 wakes up. MapState.AllDone: true
+Worker.PushMap() done. Reply: AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+16:08:13 | GetReduce() -> 0 | Current Status:  0-pending  4-pending  5-pending  1-pending  2-pending  3-pending  6-pending  7-pending  8-pending  9-pending 
+16:08:13 | GetReduce() -> 2 | Current Status:  2-pending  3-pending Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = false
+ 6-pending  7-pending  8-pending  9-pending  1-pending  4-pending  5-pending  0-in-progress 
+16:08:13 | GetReduce() -> 4 | Current Status: Worker.GetReduce() done. Reply: Y = 2 | AllReduceDone = false
+ 1-pending  2-in-progress  3-pending  6-pending  7-pending  8-pending  9-pending  0-in-progress  4-pending  5-pending 
+Worker.GetReduce() done. Reply: Y = 4 | AllReduceDone = false
+16:08:14 | PushReduce(0) | Current Status:  0-in-progress  4-in-progress  5-pending  1-pending  2-in-progress  3-pending  6-pending  7-pending  8-pending  9-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:14 | GetReduce() -> 1 | Current Status:  0-complete  4-in-progress  5-pending  9-pending  1-pending  2-in-progress  3-pending  6-pending  7-pending  8-pending 
+Worker.GetReduce() done. Reply: Y = 1 | AllReduceDone = false
+16:08:14 | PushReduce(4) | Current Status:  4-in-progress  5-pending  0-complete  2-in-progress  3-pending  6-pending  7-pending  8-pending  9-pending  1-in-progress 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:14 | GetReduce() -> 3 | Current Status:  5-pending  0-complete  4-complete  3-pending  6-pending  7-pending  8-pending  9-pending  1-in-progress  2-in-progress 
+Worker.GetReduce() done. Reply: Y = 3 | AllReduceDone = false
+16:08:14 | PushReduce(1) | Current Status:  1-in-progress  2-in-progress  3-in-progress  6-pending  7-pending  8-pending  9-pending  0-complete  4-complete  5-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:14 | GetReduce() -> 8 | Current Status:  0-complete  4-complete  5-pending  1-complete  2-in-progress  3-in-progress  6-pending  7-pending  8-pending  9-pending 
+Worker.GetReduce() done. Reply: Y = 8 | AllReduceDone = false
+16:08:14 | PushReduce(3) | Current Status:  0-complete  4-complete  5-pending  9-pending  1-complete  2-in-progress  3-in-progress  6-pending  7-pending  8-in-progress 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:14 | GetReduce() -> 6 | Current Status:  3-complete  6-pending  7-pending  8-in-progress  9-pending  1-complete  2-in-progress  5-pending  0-complete  4-complete 
+Worker.GetReduce() done. Reply: Y = 6 | AllReduceDone = false
+16:08:14 | PushReduce(2) | Current Status:  0-complete  4-complete  5-pending  1-complete  2-in-progress  3-complete  6-in-progress  7-pending  8-in-progress  9-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:14 | GetReduce() -> 5 | Current Status:  0-complete  4-complete  5-pending  7-pending  8-in-progress  9-pending  1-complete  2-complete  3-complete  6-in-progress 
+Worker.GetReduce() done. Reply: Y = 5 | AllReduceDone = false
+16:08:15 | PushReduce(5) | Current Status:  0-complete  4-complete  5-in-progress  8-in-progress  9-pending  1-complete  2-complete  3-complete  6-in-progress  7-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:15 | GetReduce() -> 9 | Current Status:  3-complete  6-in-progress  7-pending  8-in-progress  9-pending  1-complete  2-complete  5-complete  0-complete  4-complete 
+Worker.GetReduce() done. Reply: Y = 9 | AllReduceDone = false
+16:08:15 | PushReduce(8) | Current Status:  5-complete  0-complete  4-complete  3-complete  6-in-progress  7-pending  8-in-progress  9-in-progress  1-complete  2-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:15 | GetReduce() -> 7 | Current Status:  8-complete  9-in-progress  1-complete  2-complete  3-complete  6-in-progress  7-pending  0-complete  4-complete  5-complete 
+Worker.GetReduce() done. Reply: Y = 7 | AllReduceDone = false
+16:08:15 | PushReduce(6) | Current Status:  5-complete  0-complete  4-complete  3-complete  6-in-progress  7-in-progress  8-complete  9-in-progress  1-complete  2-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:15 | GetReduce() -> -1 | Current Status:  2-complete  3-complete  6-complete  7-in-progress  8-complete  9-in-progress  1-complete  4-complete  5-complete  0-complete 
+        GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+16:08:16 | PushReduce(9) | Current Status:  0-complete  4-complete  5-complete  6-complete  7-in-progress  8-complete  9-in-progress  1-complete  2-complete  3-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:16 | GetReduce() -> -1 | Current Status:  4-complete  5-complete  0-complete  2-complete  3-complete  6-complete  7-in-progress  8-complete  9-complete  1-complete 
+        GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+16:08:16 | PushReduce(7) | Current Status:  0-complete  4-complete  5-complete  1-complete  2-complete  3-complete  6-complete  7-in-progress  8-complete  9-complete 
+        Accepted?  true
+        GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+        GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+Worker close here......
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+Worker.PushReduce() done. Reply: AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+~~~~~~~~~~~Coordinator ends here with c.ReduceState.AllDone == true~~~~~~~~~~~
+--- wc test: PASS
+*** Starting indexer test.
+16:08:22 | GetMap() -> 0 | Current Status:  4-pending  5-pending  6-pending  7-pending  0-pending  1-pending  2-pending  3-pending 
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+16:08:22 | GetMap() -> 6 | Current Status:  5-pending  6-pending  7-pending  0-in-progress  1-pending  2-pending  3-pending  4-pending 
+Worker.GetMap() done. Reply: X = 6 | AllMapDone = false
+16:08:22 | PushMap(0) | Current Status:  5-pending  6-in-progress  7-pending  0-in-progress  1-pending  2-pending  3-pending  4-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:22 | GetMap() -> 5 | Current Status:  7-pending  0-complete  1-pending  2-pending  3-pending  4-pending  5-pending  6-in-progress 
+Worker.GetMap() done. Reply: X = 5 | AllMapDone = false
+16:08:22 | PushMap(5) | Current Status:  1-pending  2-pending  3-pending  4-pending  5-in-progress  6-in-progress  7-pending  0-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:22 | GetMap() -> 1 | Current Status:  6-in-progress  7-pending  0-complete  1-pending  2-pending  3-pending  4-pending  5-complete 
+Worker.GetMap() done. Reply: X = 1 | AllMapDone = false
+16:08:22 | PushMap(6) | Current Status:  0-complete  1-in-progress  2-pending  3-pending  4-pending  5-complete  6-in-progress  7-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:22 | GetMap() -> 7 | Current Status:  1-in-progress  2-pending  3-pending  4-pending  5-complete  6-complete  7-pending  0-complete 
+Worker.GetMap() done. Reply: X = 7 | AllMapDone = false
+16:08:22 | PushMap(7) | Current Status:  2-pending  3-pending  4-pending  5-complete  6-complete  7-in-progress  0-complete  1-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:22 | GetMap() -> 2 | Current Status:  5-complete  6-complete  7-complete  0-complete  1-in-progress  2-pending  3-pending  4-pending 
+Worker.GetMap() done. Reply: X = 2 | AllMapDone = false
+16:08:22 | PushMap(1) | Current Status:  4-pending  5-complete  6-complete  7-complete  0-complete  1-in-progress  2-in-progress  3-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:22 | GetMap() -> 3 | Current Status:  0-complete  1-complete  2-in-progress  3-pending  4-pending  5-complete  6-complete  7-complete 
+Worker.GetMap() done. Reply: X = 3 | AllMapDone = false
+16:08:23 | PushMap(2) | Current Status:  4-pending  5-complete  6-complete  7-complete  0-complete  1-complete  2-in-progress  3-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:23 | GetMap() -> 4 | Current Status:  4-pending  5-complete  6-complete  7-complete  0-complete  1-complete  2-complete  3-in-progress 
+Worker.GetMap() done. Reply: X = 4 | AllMapDone = false
+16:08:23 | PushMap(3) | Current Status:  7-complete  0-complete  1-complete  2-complete  3-in-progress  4-in-progress  5-complete  6-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:23 | GetMap() -> -1 | Current Status:  6-complete  7-complete  0-complete  1-complete  2-complete  3-complete  4-in-progress  5-complete 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:08:23 | PushMap(4) | Current Status:  6-complete  7-complete  0-complete  1-complete  2-complete  3-complete  4-in-progress  5-complete 
+        Accepted?  true
+All map have been done. broadcasting...
+        GetMap() -> -1 wakes up. MapState.AllDone: true
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+Worker.PushMap() done. Reply: AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+16:08:23 | GetReduce() -> 3 | Current Status:  0-pending  1-pending  4-pending  6-pending  9-pending  2-pending  3-pending  5-pending  7-pending  8-pending 
+16:08:23 | GetReduce() -> 9 | Current Status:  9-pending  0-pending  1-pending  4-pending  6-pending  8-pending  2-pending  3-in-progress  5-pending  7-pending 
+Worker.GetReduce() done. Reply: Y = 3 | AllReduceDone = false
+Worker.GetReduce() done. Reply: Y = 9 | AllReduceDone = false
+16:08:24 | PushReduce(3) | Current Status:  3-in-progress  5-pending  7-pending  8-pending  2-pending  1-pending  4-pending  6-pending  9-in-progress  0-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:24 | GetReduce() -> 5 | Current Status:  4-pending  6-pending  9-in-progress  0-pending  1-pending  5-pending  7-pending  8-pending  2-pending  3-complete 
+Worker.GetReduce() done. Reply: Y = 5 | AllReduceDone = false
+16:08:24 | PushReduce(9) | Current Status:  0-pending  1-pending  4-pending  6-pending  9-in-progress  2-pending  3-complete  5-in-progress  7-pending  8-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:24 | GetReduce() -> 2 | Current Status:  0-pending  1-pending  4-pending  6-pending  9-complete  2-pending  3-complete  5-in-progress  7-pending  8-pending 
+Worker.GetReduce() done. Reply: Y = 2 | AllReduceDone = false
+16:08:24 | PushReduce(5) | Current Status:  9-complete  0-pending  1-pending  4-pending  6-pending  8-pending  2-in-progress  3-complete  5-in-progress  7-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:24 | GetReduce() -> 7 | Current Status:  9-complete  0-pending  1-pending  4-pending  6-pending  8-pending  2-in-progress  3-complete  5-complete  7-pending 
+Worker.GetReduce() done. Reply: Y = 7 | AllReduceDone = false
+16:08:24 | PushReduce(2) | Current Status:  3-complete  5-complete  7-in-progress  8-pending  2-in-progress  1-pending  4-pending  6-pending  9-complete  0-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:24 | GetReduce() -> 8 | Current Status:  8-pending  2-complete  3-complete  5-complete  7-in-progress  9-complete  0-pending  1-pending  4-pending  6-pending 
+Worker.GetReduce() done. Reply: Y = 8 | AllReduceDone = false
+16:08:24 | PushReduce(8) | Current Status:  2-complete  3-complete  5-complete  7-in-progress  8-in-progress  0-pending  1-pending  4-pending  6-pending  9-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:24 | GetReduce() -> 4 | Current Status:  0-pending  1-pending  4-pending  6-pending  9-complete  2-complete  3-complete  5-complete  7-in-progress  8-complete 
+Worker.GetReduce() done. Reply: Y = 4 | AllReduceDone = false
+16:08:24 | PushReduce(7) | Current Status:  2-complete  3-complete  5-complete  7-in-progress  8-complete  0-pending  1-pending  4-in-progress  6-pending  9-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:24 | GetReduce() -> 0 | Current Status:  9-complete  0-pending  1-pending  4-in-progress  6-pending  8-complete  2-complete  3-complete  5-complete  7-complete 
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = false
+16:08:24 | PushReduce(4) | Current Status:  8-complete  2-complete  3-complete  5-complete  7-complete  9-complete  0-in-progress  1-pending  4-in-progress  6-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:24 | GetReduce() -> 1 | Current Status:  3-complete  5-complete  7-complete  8-complete  2-complete  1-pending  4-complete  6-pending  9-complete  0-in-progress 
+Worker.GetReduce() done. Reply: Y = 1 | AllReduceDone = false
+16:08:24 | PushReduce(0) | Current Status:  2-complete  3-complete  5-complete  7-complete  8-complete  0-in-progress  1-in-progress  4-complete  6-pending  9-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:24 | GetReduce() -> 6 | Current Status:  0-complete  1-in-progress  4-complete  6-pending  9-complete  2-complete  3-complete  5-complete  7-complete  8-complete 
+Worker.GetReduce() done. Reply: Y = 6 | AllReduceDone = false
+16:08:24 | PushReduce(1) | Current Status:  2-complete  3-complete  5-complete  7-complete  8-complete  0-complete  1-in-progress  4-complete  6-in-progress  9-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:24 | GetReduce() -> -1 | Current Status:  2-complete  3-complete  5-complete  7-complete  8-complete  0-complete  1-complete  4-complete  6-in-progress  9-complete 
+        GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+16:08:24 | PushReduce(6) | Current Status:  2-complete  3-complete  5-complete  7-complete  8-complete  0-complete  1-complete  4-complete  6-in-progress  9-complete 
+        Accepted?  true
+        GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+Worker.PushReduce() done. Reply: AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+Worker close here......
+--- indexer test: PASS
+~~~~~~~~~~~Coordinator ends here with c.ReduceState.AllDone == true~~~~~~~~~~~
+*** Starting map parallelism test.
+16:08:27 | GetMap() -> 4 | Current Status:  1-pending  2-pending  3-pending  4-pending  5-pending  6-pending  7-pending  0-pending 
+16:08:27 | GetMap() -> 3 | Current Status:  0-pending  1-pending  2-pending  3-pending  4-in-progress  5-pending  6-pending  7-pending 
+Worker.GetMap() done. Reply: X = 3 | AllMapDone = false
+Worker.GetMap() done. Reply: X = 4 | AllMapDone = false
+16:08:28 | PushMap(3) | Current Status:  5-pending  6-pending  7-pending  0-pending  1-pending  2-pending  3-in-progress  4-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:28 | GetMap() -> 5 | Current Status:  0-pending  1-pending  2-pending  3-complete  4-in-progress  5-pending  6-pending  7-pending 
+Worker.GetMap() done. Reply: X = 5 | AllMapDone = false
+16:08:28 | PushMap(4) | Current Status:  1-pending  2-pending  3-complete  4-in-progress  5-in-progress  6-pending  7-pending  0-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:28 | GetMap() -> 6 | Current Status:  1-pending  2-pending  3-complete  4-complete  5-in-progress  6-pending  7-pending  0-pending 
+Worker.GetMap() done. Reply: X = 6 | AllMapDone = false
+16:08:29 | PushMap(5) | Current Status:  5-in-progress  6-in-progress  7-pending  0-pending  1-pending  2-pending  3-complete  4-complete 
+        Accepted?  true
+16:08:29 | PushMap(6) | Current Status:  7-pending  0-pending  1-pending  2-pending  3-complete  4-complete  5-complete  6-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:29 | GetMap() -> 2 | Current Status:  5-complete  6-complete  7-pending  0-pending  1-pending  2-pending  3-complete  4-complete 
+16:08:29 | GetMap() -> 7 | Current Status:  3-complete Worker.GetMap() done. Reply: X = 2 | AllMapDone = false
+ 4-complete  5-complete  6-complete  7-pending  0-pending  1-pending  2-in-progress 
+Worker.GetMap() done. Reply: X = 7 | AllMapDone = false
+16:08:30 | PushMap(2) | Current Status:  2-in-progress  3-complete  4-complete  5-complete  6-complete  7-in-progress  0-pending  1-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:30 | GetMap() -> 0 | Current Status:  3-complete  4-complete  5-complete  6-complete  7-in-progress  0-pending  1-pending  2-complete 
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+16:08:30 | PushMap(7) | Current Status:  7-in-progress  0-in-progress  1-pending  2-complete  3-complete  4-complete  5-complete  6-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:30 | GetMap() -> 1 | Current Status:  6-complete  7-complete  0-in-progress  1-pending  2-complete  3-complete  4-complete  5-complete 
+Worker.GetMap() done. Reply: X = 1 | AllMapDone = false
+16:08:31 | PushMap(0) | Current Status:  7-complete  0-in-progress  1-in-progress  2-complete  3-complete  4-complete  5-complete  6-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:31 | GetMap() -> -1 | Current Status:  1-in-progress  2-complete  3-complete  4-complete  5-complete  6-complete  7-complete  0-complete 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:08:31 | PushMap(1) | Current Status:  0-complete  1-in-progress  2-complete  3-complete  4-complete  5-complete  6-complete  7-complete 
+        Accepted?  true
+All map have been done. broadcasting...
+        GetMap() -> -1 wakes up. MapState.AllDone: true
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+16:08:31 | GetReduce() -> 5 | Current Status:  0-pending  1-pending  5-pending  7-pending  8-pending  9-pending  2-pending  3-pending  4-pending  6-pending 
+Worker.PushMap() done. Reply: AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+Worker.GetReduce() done. Reply: Y = 5 | AllReduceDone = false
+16:08:31 | GetReduce() -> 7 | Current Status:  5-in-progress  7-pending  8-pending  9-pending  0-pending  1-pending  4-pending  6-pending  2-pending  3-pending 
+16:08:31 | PushReduce(5) | Current Status:  3-pending  4-pending  6-pending  2-pending  1-pending  5-in-progress  7-in-progress  8-pending  9-pending  0-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:31 | GetReduce() -> 9 | Current Status:  3-pending  4-pending  6-pending  2-pending  1-pending  5-complete  7-in-progress  8-pending  9-pending  0-pending 
+Worker.GetReduce() done. Reply: Y = 9 | AllReduceDone = false
+16:08:31 | PushReduce(9) | Current Status:  1-pending  5-complete  7-in-progress  8-pending  9-in-progress  0-pending  3-pending  4-pending  6-pending  2-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+Worker.GetReduce() done. Reply: Y = 7 | AllReduceDone = false
+16:08:31 | GetReduce() -> 8 | Current Status:  2-pending  3-pending  4-pending  6-pending  9-complete  0-pending  1-pending  5-complete  7-in-progress  8-pending 
+16:08:31 | PushReduce(7) | Current Status: Worker.GetReduce() done. Reply: Y = 8 | AllReduceDone = false
+ 3-pending  4-pending  6-pending  2-pending  1-pending  5-complete  7-in-progress  8-in-progress  9-complete  0-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:31 | PushReduce(8) | Current Status:  4-pending  6-pending  2-pending  3-pending  5-complete  7-complete  8-in-progress  9-complete  0-pending  1-pending 
+        Accepted?  true
+16:08:31 | GetReduce() -> 0 | Current Status:  0-pending  1-pending  5-complete  7-complete  8-complete  9-complete  2-pending  3-pending  4-pending  6-pending 
+Worker.PushReduce() done. Reply: AllReduceDone = false
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = false
+16:08:31 | GetReduce() -> 1 | Current Status:  0-in-progress  1-pending  5-complete  7-complete  8-complete  9-complete  2-pending  3-pending  4-pending  6-pending 
+16:08:31 | PushReduce(0) | Current Status:  2-pending  3-pending  4-pending  6-pending  0-in-progress  1-in-progress  5-complete  7-complete  8-complete  9-complete 
+        Accepted?  true
+Worker.GetReduce() done. Reply: Y = 1 | AllReduceDone = false
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:31 | GetReduce() -> 2 | Current Status:  0-complete  1-in-progress  5-complete  7-complete  8-complete  9-complete  2-pending  3-pending  4-pending  6-pending 
+16:08:31 | PushReduce(1) | Current Status:  2-in-progress  3-pending  4-pending  6-pending  8-complete  9-complete  0-complete  1-in-progress  5-complete  7-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+Worker.GetReduce() done. Reply: Y = 2 | AllReduceDone = false
+16:08:31 | GetReduce() -> 3 | Current Status:  7-complete  8-complete  9-complete  0-complete  1-complete  5-complete  6-pending  2-in-progress  3-pending  4-pending 
+16:08:31 | PushReduce(2) | Current Status:  9-complete  0-complete  1-complete  5-complete  7-complete  8-complete  2-in-progress  3-in-progress  4-pending  6-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:31 | GetReduce() -> 4 | Current Status:  3-in-progress  4-pending  6-pending  2-complete  1-complete  5-complete  7-complete  8-complete  9-complete  0-complete 
+Worker.GetReduce() done. Reply: Y = 3 | AllReduceDone = false
+16:08:31 | PushReduce(3) | Current Status:  0-complete  1-complete  5-complete  7-complete  8-complete  9-complete  2-complete  3-in-progress  4-in-progress  6-pending 
+        Accepted?  true
+Worker.GetReduce() done. Reply: Y = 4 | AllReduceDone = false
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:31 | GetReduce() -> 6 | Current Status:  2-complete  3-complete  4-in-progress  6-pending  0-complete  1-complete  5-complete  7-complete  8-complete  9-complete 
+Worker.GetReduce() done. Reply: Y = 6 | AllReduceDone = false
+16:08:31 | PushReduce(4) | Current Status:  5-complete  7-complete  8-complete  9-complete  0-complete  1-complete  4-in-progress  6-in-progress  2-complete  3-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:31 | GetReduce() -> -1 | Current Status:  2-complete  3-complete  4-complete  6-in-progress  8-complete  9-complete  0-complete  1-complete  5-complete  7-complete 
+        GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+16:08:31 | PushReduce(6) | Current Status:  2-complete  3-complete  4-complete  6-in-progress  0-complete  1-complete  5-complete  7-complete  8-complete  9-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+        GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+--- map parallelism test: PASS
+~~~~~~~~~~~Coordinator ends here with c.ReduceState.AllDone == true~~~~~~~~~~~
+*** Starting reduce parallelism test.
+16:08:34 | GetMap() -> 2 | Current Status:  6-pending  7-pending  0-pending  1-pending  2-pending  3-pending  4-pending  5-pending 
+16:08:34 | GetMap() -> 1 | Current Status:  5-pending  6-pending  7-pending  0-pending  1-pending  2-in-progress  3-pending  4-pending 
+Worker.GetMap() done. Reply: X = 2 | AllMapDone = false
+Worker.GetMap() done. Reply: X = 1 | AllMapDone = false
+16:08:34 | PushMap(2) | Current Status:  2-in-progress  3-pending  4-pending  5-pending  6-pending  7-pending  0-pending  1-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:34 | GetMap() -> 3 | Current Status:  0-pending  1-in-progress  2-complete  3-pending  4-pending  5-pending  6-pending  7-pending 
+Worker.GetMap() done. Reply: X = 3 | AllMapDone = false
+16:08:34 | PushMap(1) | Current Status:  5-pending  6-pending  7-pending  0-pending  1-in-progress  2-complete  3-in-progress  4-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:34 | GetMap() -> 6 | Current Status:  7-pending  0-pending  1-complete  2-complete  3-in-progress  4-pending  5-pending  6-pending 
+Worker.GetMap() done. Reply: X = 6 | AllMapDone = false
+16:08:34 | PushMap(6) | Current Status:  7-pending  0-pending  1-complete  2-complete  3-in-progress  4-pending  5-pending  6-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:34 | GetMap() -> 0 | Current Status:  3-in-progress  4-pending  5-pending  6-complete  7-pending  0-pending  1-complete  2-complete 
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+16:08:34 | PushMap(3) | Current Status:  0-in-progress  1-complete  2-complete  3-in-progress  4-pending  5-pending  6-complete  7-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:34 | GetMap() -> 4 | Current Status:  1-complete  2-complete  3-complete  4-pending  5-pending  6-complete  7-pending  0-in-progress 
+Worker.GetMap() done. Reply: X = 4 | AllMapDone = false
+16:08:34 | PushMap(0) | Current Status:  4-in-progress  5-pending  6-complete  7-pending  0-in-progress  1-complete  2-complete  3-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:34 | GetMap() -> 5 | Current Status:  7-pending  0-complete  1-complete  2-complete  3-complete  4-in-progress  5-pending  6-complete 
+Worker.GetMap() done. Reply: X = 5 | AllMapDone = false
+16:08:34 | PushMap(5) | Current Status:  3-complete  4-in-progress  5-in-progress  6-complete  7-pending  0-complete  1-complete  2-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:34 | GetMap() -> 7 | Current Status:  6-complete  7-pending  0-complete  1-complete  2-complete  3-complete  4-in-progress  5-complete 
+Worker.GetMap() done. Reply: X = 7 | AllMapDone = false
+16:08:34 | PushMap(4) | Current Status:  5-complete  6-complete  7-in-progress  0-complete  1-complete  2-complete  3-complete  4-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:34 | GetMap() -> -1 | Current Status:  3-complete  4-complete  5-complete  6-complete  7-in-progress  0-complete  1-complete  2-complete 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:08:34 | PushMap(7) | Current Status:  6-complete  7-in-progress  0-complete  1-complete  2-complete  3-complete  4-complete  5-complete 
+        Accepted?  true
+All map have been done. broadcasting...
+        GetMap() -> -1 wakes up. MapState.AllDone: true
+Worker.PushMap() done. Reply: AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+16:08:34 | GetReduce() -> 1 | Current Status:  4-pending  5-pending  7-pending  8-pending  9-pending  0-pending Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+ 2-pending  3-pending  1-pending  6-pending 
+Worker.GetReduce() done. Reply: Y = 1 | AllReduceDone = false
+16:08:34 | GetReduce() -> 7 | Current Status:  4-pending  5-pending  7-pending  8-pending  9-pending  0-pending  2-pending  3-pending  1-in-progress  6-pending 
+Worker.GetReduce() done. Reply: Y = 7 | AllReduceDone = false
+16:08:34 | PushReduce(7) | Current Status:  1-in-progress  6-pending  3-pending  4-pending  5-pending  7-in-progress  8-pending  9-pending  0-pending  2-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:34 | GetReduce() -> 6 | Current Status:  9-pending  0-pending  2-pending  3-pending  4-pending  5-pending  7-complete  8-pending  1-in-progress  6-pending 
+Worker.GetReduce() done. Reply: Y = 6 | AllReduceDone = false
+16:08:35 | PushReduce(6) | Current Status:  7-complete  8-pending  9-pending  0-pending  2-pending  3-pending  4-pending  5-pending  1-in-progress  6-in-progress 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:35 | GetReduce() -> 8 | Current Status:  1-in-progress  6-complete  0-pending  2-pending  3-pending  4-pending  5-pending  7-complete  8-pending  9-pending 
+Worker.GetReduce() done. Reply: Y = 8 | AllReduceDone = false
+16:08:35 | PushReduce(8) | Current Status:  1-in-progress  6-complete  3-pending  4-pending  5-pending  7-complete  8-in-progress  9-pending  0-pending  2-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:35 | GetReduce() -> 4 | Current Status:  8-complete  9-pending  0-pending  2-pending  3-pending  4-pending  5-pending  7-complete  1-in-progress  6-complete 
+Worker.GetReduce() done. Reply: Y = 4 | AllReduceDone = false
+16:08:35 | PushReduce(1) | Current Status:  6-complete  1-in-progress  2-pending  3-pending  4-in-progress  5-pending  7-complete  8-complete  9-pending  0-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:35 | GetReduce() -> 2 | Current Status:  1-complete  6-complete  7-complete  8-complete  9-pending  0-pending  2-pending  3-pending  4-in-progress  5-pending 
+Worker.GetReduce() done. Reply: Y = 2 | AllReduceDone = false
+16:08:36 | PushReduce(2) | Current Status:  1-complete  6-complete  8-complete  9-pending  0-pending  2-in-progress  3-pending  4-in-progress  5-pending  7-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:36 | GetReduce() -> 0 | Current Status:  1-complete  6-complete  3-pending  4-in-progress  5-pending  7-complete  8-complete  9-pending  0-pending  2-complete 
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = false
+16:08:37 | PushReduce(0) | Current Status:  1-complete  6-complete  4-in-progress  5-pending  7-complete  8-complete  9-pending  0-in-progress  2-complete  3-pending 
+        Accepted?  true
+16:08:37 | PushReduce(4) | Current Status:  1-complete  6-complete  9-pending  0-complete  2-complete  3-pending  4-in-progress  5-pending  7-complete  8-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:37 | GetReduce() -> 9 | Current Status:  1-complete  6-complete  7-complete  8-complete  9-pending  0-complete  2-complete  3-pending  4-complete  5-pending 
+Worker.GetReduce() done. Reply: Y = 9 | AllReduceDone = false
+16:08:37 | GetReduce() -> 3 | Current Status:  6-complete  1-complete  2-complete  3-pending  4-complete  5-pending  7-complete  8-complete  9-in-progress  0-complete 
+Worker.GetReduce() done. Reply: Y = 3 | AllReduceDone = false
+16:08:38 | PushReduce(9) | Current Status:  0-complete  2-complete  3-in-progress  4-complete  5-pending  7-complete  8-complete  9-in-progress  1-complete  6-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:38 | GetReduce() -> 5 | Current Status:  0-complete  2-complete  3-in-progress  4-complete  5-pending  7-complete  8-complete  9-complete  1-complete  6-complete 
+Worker.GetReduce() done. Reply: Y = 5 | AllReduceDone = false
+16:08:39 | PushReduce(3) | Current Status:  1-complete  6-complete  0-complete  2-complete  3-in-progress  4-complete  5-in-progress  7-complete  8-complete  9-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:39 | PushReduce(5) | Current Status:  2-complete  3-complete  4-complete  5-in-progress  7-complete  8-complete  9-complete  0-complete  6-complete  1-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = false
+16:08:39 | PushReduce(0) | Current Status:  0-complete  2-complete  3-complete  4-complete  5-complete  7-complete  8-complete  9-complete  1-complete  6-complete 
+        Accepted?  false
+Worker.PushReduce() done. Reply: AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+--- reduce parallelism test: PASS
+~~~~~~~~~~~Coordinator ends here with c.ReduceState.AllDone == true~~~~~~~~~~~
+*** Starting job count test.
+16:08:42 | GetMap() -> 3 | Current Status:  5-pending  6-pending  7-pending  0-pending  1-pending  2-pending  3-pending  4-pending 
+16:08:42 | GetMap() -> 1 | Current Status:  2-pending  3-in-progress  4-pending  5-pending  6-pending  7-pending  0-pending  1-pending 
+Worker.GetMap() done. Reply: X = 3 | AllMapDone = false
+Worker.GetMap() done. Reply: X = 1 | AllMapDone = false
+16:08:46 | PushMap(1) | Current Status:  1-in-progress  2-pending  3-in-progress  4-pending  5-pending  6-pending  7-pending  0-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:46 | GetMap() -> 6 | Current Status:  2-pending  3-in-progress  4-pending  5-pending  6-pending  7-pending  0-pending  1-complete 
+Worker.GetMap() done. Reply: X = 6 | AllMapDone = false
+16:08:46 | PushMap(3) | Current Status:  1-complete  2-pending  3-in-progress  4-pending  5-pending  6-in-progress  7-pending  0-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:46 | GetMap() -> 0 | Current Status:  5-pending  6-in-progress  7-pending  0-pending  1-complete  2-pending  3-complete  4-pending 
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+16:08:50 | PushMap(6) | Current Status:  1-complete  2-pending  3-complete  4-pending  5-pending  6-in-progress  7-pending  0-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:50 | GetMap() -> 2 | Current Status:  1-complete  2-pending  3-complete  4-pending  5-pending  6-complete  7-pending  0-in-progress 
+Worker.GetMap() done. Reply: X = 2 | AllMapDone = false
+16:08:50 | PushMap(0) | Current Status:  3-complete  4-pending  5-pending  6-complete  7-pending  0-in-progress  1-complete  2-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:50 | GetMap() -> 4 | Current Status:  7-pending  0-complete  1-complete  2-in-progress  3-complete  4-pending  5-pending  6-complete 
+Worker.GetMap() done. Reply: X = 4 | AllMapDone = false
+16:08:54 | PushMap(2) | Current Status:  7-pending  0-complete  1-complete  2-in-progress  3-complete  4-in-progress  5-pending  6-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:54 | GetMap() -> 5 | Current Status:  5-pending  6-complete  7-pending  0-complete  1-complete  2-complete  3-complete  4-in-progress 
+Worker.GetMap() done. Reply: X = 5 | AllMapDone = false
+16:08:54 | PushMap(4) | Current Status:  4-in-progress  5-in-progress  6-complete  7-pending  0-complete  1-complete  2-complete  3-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:54 | GetMap() -> 7 | Current Status:  3-complete  4-complete  5-in-progress  6-complete  7-pending  0-complete  1-complete  2-complete 
+Worker.GetMap() done. Reply: X = 7 | AllMapDone = false
+16:08:56 | PushMap(5) | Current Status:  7-in-progress  0-complete  1-complete  2-complete  3-complete  4-complete  5-in-progress  6-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:56 | GetMap() -> -1 | Current Status:  4-complete  5-complete  6-complete  7-in-progress  0-complete  1-complete  2-complete  3-complete 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:08:56 | PushMap(7) | Current Status:  0-complete  1-complete  2-complete  3-complete  4-complete  5-complete  6-complete  7-in-progress 
+        Accepted?  true
+All map have been done. broadcasting...
+        GetMap() -> -1 wakes up. MapState.AllDone: true
+Worker.PushMap() done. Reply: AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+16:08:56 | GetReduce() -> 1 | Current Status:  1-pending  3-pending  5-pending  7-pending  8-pending  9-pending  0-pending  2-pending  4-pending  6-pending 
+16:08:56 | GetReduce() -> 0 | Current Status:  4-pending  6-pending  0-pending  2-pending  5-pending  7-pending  8-pending  9-pending  1-in-progress  3-pending 
+Worker.GetReduce() done. Reply: Y = 1 | AllReduceDone = false
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = false
+16:08:56 | PushReduce(1) | Current Status:  3-pending  5-pending  7-pending  8-pending  9-pending  1-in-progress  2-pending  4-pending  6-pending  0-in-progress 
+        Accepted?  true
+16:08:56 | PushReduce(0) | Current Status:  2-pending  4-pending  6-pending  0-in-progress  3-pending  5-pending  7-pending  8-pending  9-pending  1-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:56 | GetReduce() -> 5 | Current Status:  1-complete  3-pending  5-pending  7-pending  8-pending  9-pending  0-complete  2-pending  4-pending  6-pending 
+16:08:56 | GetReduce() -> 2 | Current Status:  0-complete  2-pending  4-pending  6-pending  1-complete  3-pending  5-in-progress  7-pending  8-pending  9-pending 
+Worker.GetReduce() done. Reply: Y = 2 | AllReduceDone = false
+Worker.GetReduce() done. Reply: Y = 5 | AllReduceDone = false
+16:08:56 | PushReduce(5) | Current Status:  6-pending  0-complete  2-in-progress  4-pending  7-pending  8-pending  9-pending  1-complete  3-pending  5-in-progress 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:56 | GetReduce() -> 3 | Current Status:  1-complete  3-pending  5-complete  7-pending  8-pending  9-pending  0-complete  2-in-progress  4-pending  6-pending 
+16:08:56 | PushReduce(2) | Current Status:  8-pending  9-pending  1-complete  3-in-progress  5-complete  7-pending  0-complete  2-in-progress  4-pending  6-pending 
+        Accepted?  true
+Worker.GetReduce() done. Reply: Y = 3 | AllReduceDone = false
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:56 | GetReduce() -> 7 | Current Status:  0-complete  2-complete  4-pending  6-pending  1-complete  3-in-progress  5-complete  7-pending  8-pending  9-pending 
+16:08:56 | PushReduce(3) | Current Status:  1-complete  3-in-progress  5-complete  7-in-progress  8-pending  9-pending  0-complete  2-complete  4-pending  6-pending 
+        Accepted?  true
+Worker.GetReduce() done. Reply: Y = 7 | AllReduceDone = false
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:56 | GetReduce() -> 8 | Current Status:  0-complete  2-complete  4-pending  6-pending  8-pending  9-pending  1-complete  3-complete  5-complete  7-in-progress 
+Worker.GetReduce() done. Reply: Y = 8 | AllReduceDone = false
+16:08:56 | PushReduce(7) | Current Status:  0-complete  2-complete  4-pending  6-pending  1-complete  3-complete  5-complete  7-in-progress  8-in-progress  9-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:56 | PushReduce(8) | Current Status:  0-complete  2-complete  4-pending  6-pending  1-complete  3-complete  5-complete  7-complete  8-in-progress  9-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:56 | GetReduce() -> 4 | Current Status:  0-complete  2-complete  4-pending  6-pending  9-pending  1-complete  3-complete  5-complete  7-complete  8-complete 
+Worker.GetReduce() done. Reply: Y = 4 | AllReduceDone = false
+16:08:56 | PushReduce(4) | Current Status:  0-complete  2-complete  4-in-progress  6-pending  1-complete  3-complete  5-complete  7-complete  8-complete  9-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:56 | GetReduce() -> 9 | Current Status:  1-complete  3-complete  5-complete  7-complete  8-complete  9-pending  0-complete  2-complete  4-complete  6-pending 
+16:08:56 | GetReduce() -> 6 | Current Status:  0-complete  2-complete  4-complete  6-pending  1-complete  3-complete  5-complete  7-complete  8-complete  9-in-progress 
+Worker.GetReduce() done. Reply: Y = 6 | AllReduceDone = false
+Worker.GetReduce() done. Reply: Y = 9 | AllReduceDone = false
+16:08:56 | PushReduce(6) | Current Status:  4-complete  6-in-progress  0-complete  2-complete  5-complete  7-complete  8-complete  9-in-progress  1-complete  3-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:56 | GetReduce() -> -1 | Current Status:  7-complete  8-complete  9-in-progress  1-complete  3-complete  5-complete  6-complete  0-complete  2-complete  4-complete 
+        GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+16:08:56 | PushReduce(9) | Current Status:  4-complete  6-complete  0-complete  2-complete  5-complete  7-complete  8-complete  9-in-progress  1-complete  3-complete 
+        Accepted?  true
+        GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+Worker.PushReduce() done. Reply: AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+2024/02/15 16:08:56 cannot open : open : no such file or directory
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+2024/02/15 16:08:56 cannot open : open : no such file or directory
+--- job count test: PASS
+~~~~~~~~~~~Coordinator ends here with c.ReduceState.AllDone == true~~~~~~~~~~~
+*** Starting early exit test.
+16:08:58 | GetMap() -> 7 | Current Status:  4-pending  5-pending  6-pending  7-pending  0-pending  1-pending  2-pending  3-pending 
+16:08:58 | GetMap() -> 5 | Current Status:  6-pending  7-in-progress  0-pending  1-pending  2-pending  3-pending  4-pending  5-pending 
+16:08:58 | GetMap() -> 3 | Current Status:  6-pending  7-in-progress  0-pending  1-pending  2-pending  3-pending  4-pending  5-in-progress 
+Worker.GetMap() done. Reply: X = 7 | AllMapDone = false
+Worker.GetMap() done. Reply: X = 3 | AllMapDone = false
+Worker.GetMap() done. Reply: X = 5 | AllMapDone = false
+16:08:58 | PushMap(5) | Current Status:  0-pending  1-pending  2-pending  3-in-progress  4-pending  5-in-progress  6-pending  7-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:58 | GetMap() -> 6 | Current Status:  3-in-progress  4-pending  5-complete  6-pending  7-in-progress  0-pending  1-pending  2-pending 
+16:08:58 | PushMap(7) | Current Status: Worker.GetMap() done. Reply: X = 6 | AllMapDone = false
+ 0-pending  1-pending  2-pending  3-in-progress  4-pending  5-complete  6-in-progress  7-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:58 | GetMap() -> 0 | Current Status:  6-in-progress  7-complete  0-pending  1-pending  2-pending  3-in-progress  4-pending  5-complete 
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+16:08:59 | PushMap(6) | Current Status:  6-in-progress  7-complete  0-in-progress  1-pending  2-pending  3-in-progress  4-pending  5-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:59 | GetMap() -> 4 | Current Status:  1-pending  2-pending  3-in-progress  4-pending  5-complete  6-complete  7-complete  0-in-progress 
+Worker.GetMap() done. Reply: X = 4 | AllMapDone = false
+16:08:59 | PushMap(3) | Current Status:  5-complete  6-complete  7-complete  0-in-progress  1-pending  2-pending  3-in-progress  4-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:59 | GetMap() -> 1 | Current Status:  1-pending  2-pending  3-complete  4-in-progress  5-complete  6-complete  7-complete  0-in-progress 
+16:08:59 | PushMap(0) | Current Status:  6-complete  7-complete  0-in-progress  1-in-progress  2-pending  3-complete  4-in-progress  5-complete 
+        Accepted?  true
+Worker.GetMap() done. Reply: X = 1 | AllMapDone = false
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:59 | GetMap() -> 2 | Current Status:  0-complete  1-in-progress  2-pending  3-complete  4-in-progress  5-complete  6-complete  7-complete 
+Worker.GetMap() done. Reply: X = 2 | AllMapDone = false
+16:08:59 | PushMap(1) | Current Status:  5-complete  6-complete  7-complete  0-complete  1-in-progress  2-in-progress  3-complete  4-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:59 | PushMap(4) | Current Status:  4-in-progress  5-complete  6-complete  7-complete  0-complete  1-complete  2-in-progress  3-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:08:59 | GetMap() -> -1 | Current Status:  3-complete  4-complete  5-complete  6-complete  7-complete  0-complete  1-complete  2-in-progress 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:08:59 | GetMap() -> -1 | Current Status:  4-complete  5-complete  6-complete  7-complete  0-complete  1-complete  2-in-progress  3-complete 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:08:59 | PushMap(2) | Current Status:  7-complete  0-complete  1-complete  2-in-progress  3-complete  4-complete  5-complete  6-complete 
+        Accepted?  true
+All map have been done. broadcasting...
+        GetMap() -> -1 wakes up. MapState.AllDone: true
+        GetMap() -> -1 wakes up. MapState.AllDone: true
+Worker.PushMap() done. Reply: AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+16:08:59 | GetReduce() -> 9 | Current Status:  6-pending  9-pending  0-pending  4-pending  3-pending  5-pending  7-pending  8-pending  1-pending  2-pending 
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+Worker.GetReduce() done. Reply: Y = 9 | AllReduceDone = false
+16:08:59 | GetReduce() -> 4 | Current Status:  6-pending  9-in-progress  0-pending  4-pending  3-pending  5-pending  7-pending  8-pending  1-pending  2-pending 
+16:08:59 | PushReduce(9) | Current Status:  2-pending  3-pending  5-pending  7-pending  8-pending  1-pending  4-in-progress  6-pending  9-in-progress  0-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:59 | GetReduce() -> 2 | Current Status: Worker.GetReduce() done. Reply: Y = 4 | AllReduceDone = false
+ 0-pending  4-in-progress  6-pending  9-complete  1-pending  2-pending  3-pending  5-pending  7-pending  8-pending 
+Worker.GetReduce() done. Reply: Y = 2 | AllReduceDone = false
+16:08:59 | PushReduce(4) | Current Status:  0-pending  4-in-progress  6-pending  9-complete  8-pending  1-pending  2-in-progress  3-pending  5-pending  7-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:59 | GetReduce() -> 7 | Current Status:  6-pending  9-complete  0-pending  4-complete  3-pending  5-pending  7-pending  8-pending  1-pending  2-in-progress 
+16:08:59 | GetReduce() -> 0 | Current Status:  0-pending  4-complete  6-pending  9-complete  1-pending  2-in-progress  3-pending  5-pending  7-in-progress  8-pending 
+Worker.GetReduce() done. Reply: Y = 7 | AllReduceDone = false
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = false
+16:08:59 | PushReduce(0) | Current Status:  0-in-progress  4-complete  6-pending  9-complete  1-pending  2-in-progress  3-pending  5-pending  7-in-progress  8-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:59 | PushReduce(7) | Current Status:  0-complete  4-complete  6-pending  9-complete  7-in-progress  8-pending  1-pending  2-in-progress  3-pending  5-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:59 | GetReduce() -> 6 | Current Status:  0-complete  4-complete  6-pending  9-complete  8-pending  1-pending  2-in-progress  3-pending  5-pending  7-complete 
+Worker.GetReduce() done. Reply: Y = 6 | AllReduceDone = false
+16:08:59 | GetReduce() -> 3 | Current Status:  7-complete  8-pending  1-pending  2-in-progress  3-pending  5-pending  0-complete  4-complete  6-in-progress  9-complete 
+Worker.GetReduce() done. Reply: Y = 3 | AllReduceDone = false
+16:08:59 | PushReduce(3) | Current Status:  7-complete  8-pending  1-pending  2-in-progress  3-in-progress  5-pending  0-complete  4-complete  6-in-progress  9-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:59 | GetReduce() -> 1 | Current Status:  0-complete  4-complete  6-in-progress  9-complete  1-pending  2-in-progress  3-complete  5-pending  7-complete  8-pending 
+Worker.GetReduce() done. Reply: Y = 1 | AllReduceDone = false
+16:08:59 | PushReduce(1) | Current Status:  3-complete  5-pending  7-complete  8-pending  1-in-progress  2-in-progress  6-in-progress  9-complete  0-complete  4-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:59 | GetReduce() -> 8 | Current Status:  7-complete  8-pending  1-complete  2-in-progress  3-complete  5-pending  0-complete  4-complete  6-in-progress  9-complete 
+Worker.GetReduce() done. Reply: Y = 8 | AllReduceDone = false
+16:08:59 | PushReduce(8) | Current Status:  2-in-progress  3-complete  5-pending  7-complete  8-in-progress  1-complete  4-complete  6-in-progress  9-complete  0-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:59 | GetReduce() -> 5 | Current Status:  0-complete  4-complete  6-in-progress  9-complete  7-complete  8-complete  1-complete  2-in-progress  3-complete  5-pending 
+Worker.GetReduce() done. Reply: Y = 5 | AllReduceDone = false
+16:08:59 | PushReduce(5) | Current Status:  0-complete  4-complete  6-in-progress  9-complete  8-complete  1-complete  2-in-progress  3-complete  5-in-progress  7-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:08:59 | GetReduce() -> -1 | Current Status:  7-complete  8-complete  1-complete  2-in-progress  3-complete  5-complete  0-complete  4-complete  6-in-progress  9-complete 
+        GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+16:09:02 | PushReduce(2) | Current Status:  1-complete  2-in-progress  3-complete  5-complete  7-complete  8-complete  0-complete  4-complete  6-in-progress  9-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:09:02 | GetReduce() -> -1 | Current Status:  3-complete  5-complete  7-complete  8-complete  1-complete  2-complete  6-in-progress  9-complete  0-complete  4-complete 
+        GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+16:09:02 | PushReduce(6) | Current Status:  7-complete  8-complete  1-complete  2-complete  3-complete  5-complete  0-complete  4-complete  6-in-progress  9-complete 
+        Accepted?  true
+        GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+        GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+Worker.PushReduce() done. Reply: AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+~~~~~~~~~~~Coordinator ends here with c.ReduceState.AllDone == true~~~~~~~~~~~
+--- early exit test: PASS
+*** Starting crash test.
+16:09:05 | GetMap() -> 2 | Current Status:  3-pending  4-pending  5-pending  6-pending  7-pending  0-pending  1-pending  2-pending 
+16:09:05 | GetMap() -> 0 | Current Status:  2-in-progress  3-pending  4-pending  5-pending  6-pending  7-pending  0-pending  1-pending 
+16:09:05 | GetMap() -> 3 | Current Status:  1-pending  2-in-progress  3-pending  4-pending  5-pending  6-pending  7-pending  0-in-progress 
+Worker.GetMap() done. Reply: X = 3 | AllMapDone = false
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+Worker.GetMap() done. Reply: X = 2 | AllMapDone = false
+16:09:05 | GetMap() -> 1 | Current Status:  5-pending  6-pending  7-pending  0-in-progress  1-pending  2-in-progress  3-in-progress  4-pending 
+Worker.GetMap() done. Reply: X = 1 | AllMapDone = false
+16:09:05 | PushMap(2) | Current Status:  1-in-progress  2-in-progress  3-in-progress  4-pending  5-pending  6-pending  7-pending  0-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:09:05 | PushMap(0) | Current Status:  5-pending  6-pending  7-pending  0-in-progress  1-in-progress  2-complete  3-in-progress  4-pending 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:09:05 | GetMap() -> 5 | Current Status:  3-in-progress  4-pending  5-pending  6-pending  7-pending  0-complete  1-in-progress  2-complete 
+Worker.GetMap() done. Reply: X = 5 | AllMapDone = false
+16:09:05 | GetMap() -> 4 | Current Status:  7-pending  0-complete  1-in-progress  2-complete  3-in-progress  4-pending  5-in-progress  6-pending 
+Worker.GetMap() done. Reply: X = 4 | AllMapDone = false
+16:09:06 | GetMap() -> 6 | Current Status:  2-complete  3-in-progress  4-in-progress  5-in-progress  6-pending  7-pending  0-complete  1-in-progress 
+Worker.GetMap() done. Reply: X = 6 | AllMapDone = false
+16:09:06 | GetMap() -> 7 | Current Status:  5-in-progress  6-in-progress  7-pending  0-complete  1-in-progress  2-complete  3-in-progress  4-in-progress 
+Worker.GetMap() done. Reply: X = 7 | AllMapDone = false
+16:09:07 | GetMap() -> -1 | Current Status:  6-in-progress  7-in-progress  0-complete  1-in-progress  2-complete  3-in-progress  4-in-progress  5-in-progress 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:09:12 | PushMap(1) | Current Status:  3-in-progress  4-in-progress  5-in-progress  6-in-progress  7-in-progress  0-complete  1-in-progress  2-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:09:12 | GetMap() -> -1 | Current Status:  7-in-progress  0-complete  1-complete  2-complete  3-in-progress  4-in-progress  5-in-progress  6-in-progress 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:09:14 | PushMap(4) | Current Status:  4-in-progress  5-in-progress  6-in-progress  7-in-progress  0-complete  1-complete  2-complete  3-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:09:14 | GetMap() -> -1 | Current Status:  4-complete  5-in-progress  6-in-progress  7-in-progress  0-complete  1-complete  2-complete  3-in-progress 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:09:14 | PushMap(6) | Current Status:  1-complete  2-complete  3-in-progress  4-complete  5-in-progress  6-in-progress  7-in-progress  0-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:09:14 | GetMap() -> -1 | Current Status:  4-complete  5-in-progress  6-complete  7-in-progress  0-complete  1-complete  2-complete  3-in-progress 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+        GetMap() -> -1 wakes up. MapState.AllDone: false
+Worker.GetMap() done. Reply: X = 3 | AllMapDone = false
+        GetMap() -> -1 wakes up. MapState.AllDone: false
+Worker.GetMap() done. Reply: X = 5 | AllMapDone = false
+16:09:15 | PushMap(5) | Current Status:  6-complete  7-in-progress  0-complete  1-complete  2-complete  3-in-progress  4-complete  5-in-progress 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:09:15 | GetMap() -> -1 | Current Status:  3-in-progress  4-complete  5-complete  6-complete  7-in-progress  0-complete  1-complete  2-complete 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+        GetMap() -> -1 wakes up. MapState.AllDone: false
+Worker.GetMap() done. Reply: X = 7 | AllMapDone = false
+16:09:19 | PushMap(3) | Current Status:  6-complete  7-in-progress  0-complete  1-complete  2-complete  3-in-progress  4-complete  5-complete 
+        Accepted?  true
+Worker.PushMap() done. Reply: AllMapDone = false
+16:09:19 | GetMap() -> -1 | Current Status:  3-complete  4-complete  5-complete  6-complete  7-in-progress  0-complete  1-complete  2-complete 
+        GetMap() -> -1 NO_MAP_AVAILABLE. Sleep...
+16:09:26 | PushMap(7) | Current Status:  4-complete  5-complete  6-complete  7-in-progress  0-complete  1-complete  2-complete  3-complete 
+        Accepted?  true
+All map have been done. broadcasting...
+        GetMap() -> -1 wakes up. MapState.AllDone: true
+        GetMap() -> -1 wakes up. MapState.AllDone: true
+        GetMap() -> -1 wakes up. MapState.AllDone: true
+Worker.PushMap() done. Reply: AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = true
+Map() all done successfully!!!!!!!!!!!!!
+
+
+
+16:09:26 | GetReduce() -> 6 | Current Status:  2-pending  5-pending  7-pending  8-pending  9-pending  0-pending  1-pending  3-pending  4-pending  6-pending 
+16:09:26 | GetReduce() -> 0 | Current Status:  4-pending  6-in-progress  0-pending  1-pending  3-pending  8-pending  9-pending  2-pending Worker.GetReduce() done. Reply: Y = 6 | AllReduceDone = false
+ 5-pending  7-pending 
+16:09:26 | GetReduce() -> 1 | Current Status:  9-pending  2-pending  5-pending  7-pending  8-pending  6-in-progress  0-in-progress  1-pending  3-pending  4-pending 
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = false
+16:09:26 | GetReduce() -> 2 | Current Status:  1-in-progress  3-pending  4-pending  6-in-progress  0-in-progress  5-pending  7-pending  8-pending  9-pending  2-pending 
+16:09:26 | PushReduce(6) | Current Status: Worker.GetReduce() done. Reply: Y = 2 | AllReduceDone = false
+ 0-in-progress Worker.GetReduce() done. Reply: Y = 1 | AllReduceDone = false
+ 1-in-progress  3-pending  4-pending  6-in-progress  2-in-progress  5-pending  7-pending  8-pending  9-pending 
+        Accepted?  true
+16:09:26 | PushReduce(0) | Current Status:  3-pending  4-pending  6-complete  0-in-progress  1-in-progress  7-pending  8-pending  9-pending  2-in-progress  5-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:09:26 | GetReduce() -> 3 | Current Status:  0-complete  1-in-progress  3-pending  4-pending  6-complete  2-in-progress  5-pending  7-pending  8-pending  9-pending 
+16:09:26 | PushReduce(2) | Current Status:  3-in-progress  4-pending  6-complete  0-complete  1-in-progress  7-pending  8-pending  9-pending  2-in-progress  5-pending 
+        Accepted?  true
+16:09:26 | GetReduce() -> 4 | Current Status:  2-complete Worker.PushReduce() done. Reply: AllReduceDone = false
+ 5-pending Worker.GetReduce() done. Reply: Y = 3 | AllReduceDone = false
+ 7-pending  8-pending  9-pending  0-complete  1-in-progress  3-in-progress  4-pending  6-complete 
+16:09:26 | PushReduce(3) | Current Status:  0-complete  1-in-progress  3-in-progress  4-in-progress  6-complete  2-complete  5-pending  7-pending  8-pending  9-pending 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:09:26 | PushReduce(1) | Current Status:  0-complete Worker.GetReduce() done. Reply: Y = 4 | AllReduceDone = false
+ 1-in-progress  3-complete  4-in-progress  6-complete  2-complete  5-pending  7-pending  8-pending  9-pending 
+        Accepted?  true
+16:09:26 | GetReduce() -> 9 | Current Status:  6-complete  0-complete  1-complete  3-complete  4-in-progress  9-pending  2-complete  5-pending  7-pending  8-pending 
+16:09:26 | GetReduce() -> 5 | Current Status:  7-pending  8-pending  9-in-progress  2-complete  5-pending  3-complete  4-in-progress  6-complete  0-complete  1-complete Worker.PushReduce() done. Reply: AllReduceDone = false
+
+16:09:26 | PushReduce(4) | Current Status:  1-complete  3-complete  4-in-progress  6-complete  0-complete  5-in-progress  7-pending  8-pending  9-in-progress  2-complete 
+        Accepted?  true
+Worker.GetReduce() done. Reply: Y = 5 | AllReduceDone = false
+Worker.GetReduce() done. Reply: Y = 9 | AllReduceDone = false
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:09:26 | GetReduce() -> 7 | Current Status:  3-complete  4-complete  6-complete  0-complete  1-complete  7-pending  8-pending  9-in-progress  2-complete  5-in-progress 
+Worker.GetReduce() done. Reply: Y = 7 | AllReduceDone = false
+16:09:26 | GetReduce() -> 8 | Current Status:  4-complete  6-complete  0-complete  1-complete  3-complete  8-pending  9-in-progress  2-complete  5-in-progress  7-in-progress 
+Worker.GetReduce() done. Reply: Y = 8 | AllReduceDone = false
+16:09:26 | PushReduce(7) | Current Status:  7-in-progress  8-in-progress  9-in-progress  2-complete  5-in-progress  3-complete  4-complete  6-complete  0-complete  1-complete 
+        Accepted?  true
+16:09:26 | PushReduce(8) | Current Status:  2-complete  5-in-progress  7-complete  8-in-progress  9-in-progress  0-complete  1-complete  3-complete  4-complete  6-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:09:26 | GetReduce() -> -1 | Current Status:  1-complete  3-complete  4-complete  6-complete  0-complete  5-in-progress  7-complete  8-complete  9-in-progress  2-complete 
+        GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:09:26 | GetReduce() -> -1 | Current Status:  0-complete  1-complete  3-complete  4-complete  6-complete  2-complete  5-in-progress  7-complete  8-complete  9-in-progress 
+        GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+16:09:32 | PushReduce(5) | Current Status:  6-complete  0-complete  1-complete  3-complete  4-complete  9-in-progress  2-complete  5-in-progress  7-complete  8-complete 
+        Accepted?  true
+Worker.PushReduce() done. Reply: AllReduceDone = false
+16:09:32 | GetReduce() -> -1 | Current Status:  7-complete  8-complete  9-in-progress  2-complete  5-complete  3-complete  4-complete  6-complete  0-complete  1-complete 
+        GetReduce() -> -1: NO_REDUCE_AVAILABLE. Sleep......
+16:09:34 | PushReduce(9) | Current Status:  3-complete  4-complete  6-complete  0-complete  1-complete  7-complete  8-complete  9-in-progress  2-complete  5-complete 
+        Accepted?  true
+        GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+        GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+        GetReduce() -> -1 wakes up. ReduceState.AllDone: true
+Worker.PushReduce() done. Reply: AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+Worker.GetReduce() done. Reply: Y = 0 | AllReduceDone = true
+!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+Reduce() all done successfully!!!!!!!!!!!!!!!!!!!
+
+
+
+Worker close here......
+~~~~~~~~~~~Coordinator ends here with c.ReduceState.AllDone == true~~~~~~~~~~~
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+2024/02/15 16:09:35 cannot open : open : no such file or directory
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+2024/02/15 16:09:35 cannot open : open : no such file or directory
+Worker.GetMap() done. Reply: X = 0 | AllMapDone = false
+2024/02/15 16:09:35 cannot open : open : no such file or directory
+--- crash test: PASS
+*** PASSED ALL TESTS
