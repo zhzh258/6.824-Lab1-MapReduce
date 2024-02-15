@@ -239,19 +239,29 @@ func (c *Coordinator) PushMap(args *PushMapArgs, reply *PushMapReply) error {
 			return nil
 		}
 	} else { // rejected
-		if task.Status == "complete" {
-			// no need to do anything. Another Worker has taken care of the failed task.
-			return nil
-		} else if task.Status == "in-progress" {
-			task.Status = "failed"
+		/* rejected iff
+		case 1. When a Worker finally return 999 seconds later...
+		case 2. When a Worker return < 10 seconds, but with args.Successful == false...
+		*/
+		if !time.Now().Before(args.StartTime.Add(task.MaxDuration)) { // case 1
+			// need to check if all done
+			// no need to reassign this task. It should be handled by the 10 seconds timer.
+			if c.isAllMapDone() {
+				reply.AllMapDone = true
+				c.MapState.AllDone = true
+				c.MapState.Mu.Unlock()
+				return nil
+			} else {
+				c.MapState.Mu.Unlock()
+				return nil
+			}
+		} else { // case 2
+			// do I need to signal this? Could there be a lost signal?
+			// TODO
 			c.MapState.Cond.Signal()
-		} else if task.Status == "failed" {
+			c.MapState.Mu.Unlock()
 			return nil
-		} else if task.Status == "pending" {
-			log.Fatal("BUG: task.Status==pending at pushMap")
 		}
-		c.MapState.Mu.Unlock()
-		return nil
 	}
 }
 
@@ -287,6 +297,12 @@ func (c *Coordinator) setMapTimeout(id int, launched_by_attempt int) { // Make s
 	if c.MapState.AllDone {
 		return
 	}
+
+	/*
+		What if we sent a PushReduce with Successful=false before 10 seconds ?
+			- solution 1. cancel this timeout event. channel? time.ticker? ...
+			- solution 2. try to detect this case in timeout. (what I'm doing here)
+	*/
 
 	if task.Attempt == launched_by_attempt && task.Status == "in-progress" { // worker timeout
 		task.Status = "failed"
@@ -410,19 +426,29 @@ func (c *Coordinator) PushReduce(args *PushReduceArgs, reply *PushReduceReply) e
 			return nil
 		}
 	} else { // rejected
-		if task.Status == "complete" {
-			// no need to do anything. Another Worker has taken care of the failed task.
-			return nil
-		} else if task.Status == "in-progress" && !args.Successful { // worker crash within 10 seconds
-			task.Status = "failed"
+		/* rejected iff
+		case 1. When a Worker finally return 999 seconds later...
+		case 2. When a Worker return < 10 seconds, but with args.Successful == false...
+		*/
+		if !time.Now().Before(args.StartTime.Add(task.MaxDuration)) { // case 1
+			// need to check if all done
+			// no need to reassign this task. It should be handled by the 10 seconds timer.
+			if c.isAllReduceDone() {
+				reply.AllReduceDone = true
+				c.ReduceState.AllDone = true
+				c.ReduceState.Mu.Unlock()
+				return nil
+			} else {
+				c.ReduceState.Mu.Unlock()
+				return nil
+			}
+		} else { // case 2
+			// do I need to signal this? Could there be a lost signal?
+			// TODO
 			c.ReduceState.Cond.Signal()
-		} else if task.Status == "failed" {
+			c.ReduceState.Mu.Unlock()
 			return nil
-		} else if task.Status == "pending" {
-			log.Fatal("BUG: task.Status==pending at pushReduce")
 		}
-		c.ReduceState.Mu.Unlock()
-		return nil
 	}
 }
 
@@ -457,6 +483,11 @@ func (c *Coordinator) setReduceTimeout(id int, launched_by_attempt int) { // Mak
 		return
 	}
 
+	/*
+		What if we have sent a PushReduce with Successful=false before 10 seconds ?
+			- solution 1. cancel this timeout event. channel? time.ticker? ...
+			- solution 2. try to detect this in timeout. (what I'm doing here)
+	*/
 	if task.Attempt == launched_by_attempt && task.Status == "in-progress" { // worker timeout
 		task.Status = "failed"
 		c.ReduceState.Cond.Signal()

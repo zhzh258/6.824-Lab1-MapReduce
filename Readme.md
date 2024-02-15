@@ -1,10 +1,17 @@
 # Lab 1 - MapReduce 
+Pass all tests in Ubuntu. See `~/console_output.txt`
 ## How to Run
+### Lab test
+```bash
+6.824/src/main$ bash test-mr.sh
+```
+
 ### My test
 ```bash
 6.824/src/main$ bash my-test.sh
 ```
-- Modify NUM_WORKERS to change number of worker
+- Modify NUM_WORKERS  to change the number of worker
+- Modify MR_APP_NAME  to change the mrapp to run
 - It runs 1 coordinator, and several worker in the background. And integrate their output in current terminal.
 
 ### Manually
@@ -30,7 +37,7 @@ In another terminal:
 2. `/main/output/mr/mr-output-Y` - The output of the Y-th Reduce()
 
 
-## Concurrency (This version works with multiple workers (without crash tho). See my-test.sh)
+## Concurrency
 ### Data Struct Explained
 ``` go
 type Coordinator struct {
@@ -136,7 +143,12 @@ else if(rejected){
 2. `if`, `else if`, `else if` - This is because some other workers might process the Map task before it returns a result that is `rejected`
 
 
-## Sample Terminal Output
+
+
+## Sample my-test.sh Terminal Output
+- mrapp: wc.go
+- 3 workers
+
 ``` bash
 /home/nonox/Desktop/project/6.824/src/main
 Building wc.go plugin...
@@ -293,7 +305,3 @@ Starting worker 2...
 [Coordinator] ~~~~~~~~~~~Coordinator ends here with c.ReduceState.AllDone == true~~~~~~~~~~~
 All processes have completed
 ```
-
-## TODO
-1. Add logic to handle coordinator/worker error. Instead of just using 2 for loops in worker.
-2. Test and debug the program with different mrapp, especially those with worker-side error. 
